@@ -8,6 +8,8 @@ from numpy.typing import NDArray
 
 Image = NDArray[Any]
 
+MAX_OCR_PIXELS = 40_000_000
+
 
 def order_corners(pts: NDArray[np.float32]) -> NDArray[np.float32]:
     s = pts.sum(axis=1)
@@ -101,8 +103,9 @@ def for_ocr(img: Image) -> Image:
     gray = flatten_light(gray)
     # Tesseract likes capital letters around 30 px tall; phone photos of A4 are often smaller.
     if gray.shape[1] < 1800:
-        factor = 1800 / gray.shape[1]
-        gray = cv2.resize(gray, None, fx=factor, fy=factor, interpolation=cv2.INTER_CUBIC)
+        factor = min(1800 / gray.shape[1], 3.0, (MAX_OCR_PIXELS / gray.size) ** 0.5)
+        if factor > 1:
+            gray = cv2.resize(gray, None, fx=factor, fy=factor, interpolation=cv2.INTER_CUBIC)
     return cv2.fastNlMeansDenoising(gray, h=12)
 
 

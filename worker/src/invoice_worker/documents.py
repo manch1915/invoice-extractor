@@ -18,10 +18,27 @@ DISPLAY_WIDTH = 1400
 PDF_DISPLAY_DPI = 150
 PDF_OCR_DPI = 300
 MIN_TEXT_WORDS = 8
+# A4 at 300 dpi is ~8.7 MP. Anything far above that is a poster or a crafted file, not an invoice.
+MAX_PAGE_PIXELS = 36_000_000
+MAX_ASPECT_RATIO = 12
+
+PILImage.MAX_IMAGE_PIXELS = MAX_PAGE_PIXELS
 
 
 class UnsupportedDocumentError(ValueError):
     pass
+
+
+def _dpi_within_budget(page: "pymupdf.Page", wanted: int) -> int:
+    width_in, height_in = page.rect.width / 72, page.rect.height / 72
+    if width_in <= 0 or height_in <= 0:
+        raise UnsupportedDocumentError("PDF page has no size")
+    if max(width_in, height_in) / min(width_in, height_in) > MAX_ASPECT_RATIO:
+        raise UnsupportedDocumentError("page proportions are not those of a document")
+    budget = int((MAX_PAGE_PIXELS / (width_in * height_in)) ** 0.5)
+    if budget < 72:
+        raise UnsupportedDocumentError("PDF page is too large")
+    return min(wanted, budget)
 
 
 @dataclass
@@ -77,15 +94,17 @@ def load_pdf(data: bytes, languages: str, max_pages: int) -> list[PageSource]:
             number = index + 1
             raw_words = page.get_text("words")
             if len(raw_words) >= MIN_TEXT_WORDS:
-                scale = PDF_DISPLAY_DPI / 72
-                image = _pixmap_to_bgr(page.get_pixmap(dpi=PDF_DISPLAY_DPI, alpha=False))
+                dpi = _dpi_within_budget(page, PDF_DISPLAY_DPI)
+                scale = dpi / 72
+                image = _pixmap_to_bgr(page.get_pixmap(dpi=dpi, alpha=False))
                 words = [
                     RawWord(text=w[4], page=number, x0=w[0] * scale, y0=w[1] * scale, x1=w[2] * scale, y1=w[3] * scale)
                     for w in raw_words
                 ]
                 pages.append(PageSource(number=number, image=image, words=words, from_text_layer=True))
             else:
-                image = _pixmap_to_bgr(page.get_pixmap(dpi=PDF_OCR_DPI, alpha=False))
+                dpi = _dpi_within_budget(page, PDF_OCR_DPI)
+                image = _pixmap_to_bgr(page.get_pixmap(dpi=dpi, alpha=False))
                 pages.append(_ocr_page(image, number, languages))
     return pages
 
@@ -93,6 +112,10 @@ def load_pdf(data: bytes, languages: str, max_pages: int) -> list[PageSource]:
 def load_image(data: bytes, languages: str) -> list[PageSource]:
     try:
         with PILImage.open(io.BytesIO(data)) as raw:
+            # the header is read lazily, so the size is known before any pixels are decoded
+            width, height = raw.size
+            if width * height > MAX_PAGE_PIXELS or max(width, height) > min(width, height) * MAX_ASPECT_RATIO:
+                raise UnsupportedDocumentError("image is too large or too narrow for a document")
             img = ImageOps.exif_transpose(raw).convert("RGB")
     except (OSError, PILImage.DecompressionBombError) as exc:
         raise UnsupportedDocumentError("not a readable image") from exc
