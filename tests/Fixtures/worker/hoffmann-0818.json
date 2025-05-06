@@ -1,0 +1,309 @@
+{
+  "document": {
+    "page_count": 1,
+    "source": "text_layer",
+    "language": "en",
+    "doc_type": "invoice",
+    "engine": "rules",
+    "ocr_quality": 1.0,
+    "duration_ms": 160
+  },
+  "pages": [
+    {
+      "number": 1,
+      "width": 1241,
+      "height": 1754,
+      "image": "UklGRh4AAABXRUJQVlA4TBEAAAAvAsAAAAfQ//73v/+BiOh/AAA=",
+      "words": [
+        {
+          "text": "Hoffmann",
+          "bbox": [
+            0.08404,
+            0.07286,
+            0.1426,
+            0.0201
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Küchentechnik",
+          "bbox": [
+            0.23219,
+            0.07286,
+            0.21381,
+            0.0201
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "GmbH",
+          "bbox": [
+            0.45154,
+            0.07286,
+            0.08924,
+            0.0201
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "INVOICE",
+          "bbox": [
+            0.75687,
+            0.06835,
+            0.15841,
+            0.02604
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Industriestraße",
+          "bbox": [
+            0.08404,
+            0.1023,
+            0.11163,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "14",
+          "bbox": [
+            0.19699,
+            0.1023,
+            0.02137,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "70565",
+          "bbox": [
+            0.08404,
+            0.11644,
+            0.0486,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Stuttgart,",
+          "bbox": [
+            0.13396,
+            0.11644,
+            0.07192,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Germany",
+          "bbox": [
+            0.20719,
+            0.11644,
+            0.06906,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "rechnung@hoffmann-kt.de",
+          "bbox": [
+            0.08404,
+            0.13058,
+            0.19518,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "USt-IdNr:",
+          "bbox": [
+            0.08404,
+            0.14472,
+            0.06809,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "DE",
+          "bbox": [
+            0.15345,
+            0.14472,
+            0.02323,
+            0.01238
+          ],
+          "conf": 1.0
+        }
+      ]
+    }
+  ],
+  "fields": {
+    "document_number": {
+      "value": "RE-2026-0418",
+      "raw": "RE-2026-0418",
+      "confidence": 0.95,
+      "page": 1,
+      "bbox": [
+        0.80004,
+        0.1124,
+        0.11525,
+        0.01238
+      ]
+    },
+    "issue_date": {
+      "value": "2026-08-18",
+      "raw": "18 Aug 2026",
+      "confidence": 0.88,
+      "page": 1,
+      "bbox": [
+        0.81113,
+        0.12923,
+        0.10417,
+        0.01238
+      ]
+    },
+    "due_date": {
+      "value": "2026-09-17",
+      "raw": "17 Sep 2026",
+      "confidence": 0.92,
+      "page": 1,
+      "bbox": [
+        0.81238,
+        0.14607,
+        0.10291,
+        0.01238
+      ]
+    },
+    "vendor_name": {
+      "value": "Hoffmann Küchentechnik GmbH",
+      "raw": "Hoffmann Küchentechnik GmbH",
+      "confidence": 0.75,
+      "page": 1,
+      "bbox": [
+        0.08404,
+        0.07286,
+        0.45674,
+        0.0201
+      ]
+    },
+    "vendor_tax_id": {
+      "value": "DE318452907",
+      "raw": "DE 318 452 907",
+      "confidence": 0.7,
+      "page": 1,
+      "bbox": [
+        0.15345,
+        0.14472,
+        0.11852,
+        0.01238
+      ]
+    },
+    "buyer_name": {
+      "value": "Teply Khleb LLC",
+      "raw": "Teply Khleb LLC",
+      "confidence": 0.85,
+      "page": 1,
+      "bbox": [
+        0.08404,
+        0.22979,
+        0.12405,
+        0.01297
+      ]
+    },
+    "buyer_tax_id": {
+      "value": null,
+      "raw": null,
+      "confidence": 0.0,
+      "page": null,
+      "bbox": null
+    },
+    "currency": {
+      "value": "EUR",
+      "raw": "EUR",
+      "confidence": 0.95,
+      "page": null,
+      "bbox": null
+    },
+    "subtotal": {
+      "value": "5530.00",
+      "raw": "5.530,00",
+      "confidence": 0.96,
+      "page": 1,
+      "bbox": [
+        0.83036,
+        0.40015,
+        0.07049,
+        0.01297
+      ]
+    },
+    "tax_rate": {
+      "value": "0",
+      "raw": "VAT 0% (export, zero-rated)   0,00 €",
+      "confidence": 0.85,
+      "page": 1,
+      "bbox": [
+        0.50922,
+        0.42035,
+        0.03312,
+        0.01297
+      ]
+    },
+    "tax_amount": {
+      "value": "0.00",
+      "raw": "VAT 0% (export, zero-rated)   0,00 €",
+      "confidence": 0.96,
+      "page": 1,
+      "bbox": [
+        0.50922,
+        0.42035,
+        0.03312,
+        0.01297
+      ]
+    },
+    "total": {
+      "value": "5530.00",
+      "raw": "5.530,00",
+      "confidence": 0.96,
+      "page": 1,
+      "bbox": [
+        0.81671,
+        0.4401,
+        0.08194,
+        0.01356
+      ]
+    }
+  },
+  "line_items": [
+    {
+      "description": "Spiral dough mixer SM-40, 40 l bowl",
+      "quantity": "1",
+      "unit_price": "4890.00",
+      "amount": "4890.00",
+      "confidence": 0.92,
+      "page": 1,
+      "bbox": [
+        0.0874,
+        0.34505,
+        0.8245,
+        0.01238
+      ]
+    },
+    {
+      "description": "Freight and insurance to Moscow",
+      "quantity": "1",
+      "unit_price": "640.00",
+      "amount": "640.00",
+      "confidence": 0.92,
+      "page": 1,
+      "bbox": [
+        0.0874,
+        0.36693,
+        0.8245,
+        0.01238
+      ]
+    }
+  ],
+  "category": null,
+  "warnings": []
+}

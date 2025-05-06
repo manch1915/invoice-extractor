@@ -1,0 +1,323 @@
+{
+  "document": {
+    "page_count": 1,
+    "source": "text_layer",
+    "language": "en",
+    "doc_type": "invoice",
+    "engine": "rules",
+    "ocr_quality": 1.0,
+    "duration_ms": 202
+  },
+  "pages": [
+    {
+      "number": 1,
+      "width": 1241,
+      "height": 1754,
+      "image": "UklGRh4AAABXRUJQVlA4TBEAAAAvAsAAAAfQ//73v/+BiOh/AAA=",
+      "words": [
+        {
+          "text": "Bakeware",
+          "bbox": [
+            0.08404,
+            0.07286,
+            0.14298,
+            0.0201
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Direct",
+          "bbox": [
+            0.23256,
+            0.07286,
+            0.08922,
+            0.0201
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Ltd",
+          "bbox": [
+            0.32732,
+            0.07286,
+            0.04933,
+            0.0201
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "INVOICE",
+          "bbox": [
+            0.75687,
+            0.06835,
+            0.15841,
+            0.02604
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Unit",
+          "bbox": [
+            0.08404,
+            0.1023,
+            0.03228,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "7",
+          "bbox": [
+            0.11763,
+            0.1023,
+            0.0123,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Riverside",
+          "bbox": [
+            0.08404,
+            0.11644,
+            0.06943,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Trade",
+          "bbox": [
+            0.15479,
+            0.11644,
+            0.04439,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Park,",
+          "bbox": [
+            0.2005,
+            0.11644,
+            0.03924,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "Leeds",
+          "bbox": [
+            0.24105,
+            0.11644,
+            0.04522,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "LS11",
+          "bbox": [
+            0.28758,
+            0.11644,
+            0.03838,
+            0.01238
+          ],
+          "conf": 1.0
+        },
+        {
+          "text": "5DF,",
+          "bbox": [
+            0.32728,
+            0.11644,
+            0.03603,
+            0.01238
+          ],
+          "conf": 1.0
+        }
+      ]
+    }
+  ],
+  "fields": {
+    "document_number": {
+      "value": "BD-24-1187",
+      "raw": "BD-24-1187",
+      "confidence": 0.95,
+      "page": 1,
+      "bbox": [
+        0.81792,
+        0.1124,
+        0.09737,
+        0.01238
+      ]
+    },
+    "issue_date": {
+      "value": "2026-07-28",
+      "raw": "28 Jul 2026",
+      "confidence": 0.88,
+      "page": 1,
+      "bbox": [
+        0.82219,
+        0.12923,
+        0.09311,
+        0.01238
+      ]
+    },
+    "due_date": {
+      "value": "2026-08-27",
+      "raw": "27 Aug 2026",
+      "confidence": 0.92,
+      "page": 1,
+      "bbox": [
+        0.81113,
+        0.14607,
+        0.10417,
+        0.01238
+      ]
+    },
+    "vendor_name": {
+      "value": "Bakeware Direct Ltd",
+      "raw": "Bakeware Direct Ltd",
+      "confidence": 0.75,
+      "page": 1,
+      "bbox": [
+        0.08404,
+        0.07286,
+        0.29261,
+        0.0201
+      ]
+    },
+    "vendor_tax_id": {
+      "value": "GB284617539",
+      "raw": "GB 284 6175 39",
+      "confidence": 0.7,
+      "page": 1,
+      "bbox": [
+        0.14557,
+        0.14472,
+        0.11936,
+        0.01238
+      ]
+    },
+    "buyer_name": {
+      "value": "Teply Khleb LLC",
+      "raw": "Teply Khleb LLC",
+      "confidence": 0.85,
+      "page": 1,
+      "bbox": [
+        0.08404,
+        0.22979,
+        0.12405,
+        0.01297
+      ]
+    },
+    "buyer_tax_id": {
+      "value": null,
+      "raw": null,
+      "confidence": 0.0,
+      "page": null,
+      "bbox": null
+    },
+    "currency": {
+      "value": "GBP",
+      "raw": "GBP",
+      "confidence": 0.95,
+      "page": null,
+      "bbox": null
+    },
+    "subtotal": {
+      "value": "1097.50",
+      "raw": "1,097.50",
+      "confidence": 0.96,
+      "page": 1,
+      "bbox": [
+        0.83516,
+        0.42204,
+        0.0801,
+        0.01297
+      ]
+    },
+    "tax_rate": {
+      "value": "20",
+      "raw": "20%",
+      "confidence": 0.9,
+      "page": 1,
+      "bbox": [
+        0.68813,
+        0.44224,
+        0.03679,
+        0.01297
+      ]
+    },
+    "tax_amount": {
+      "value": "219.50",
+      "raw": "219.50",
+      "confidence": 0.96,
+      "page": 1,
+      "bbox": [
+        0.84957,
+        0.44224,
+        0.06568,
+        0.01297
+      ]
+    },
+    "total": {
+      "value": "1317.00",
+      "raw": "1,317.00",
+      "confidence": 0.96,
+      "page": 1,
+      "bbox": [
+        0.82226,
+        0.46199,
+        0.09304,
+        0.01356
+      ]
+    }
+  },
+  "line_items": [
+    {
+      "description": "Perforated baguette tray, 5 channels",
+      "quantity": "12",
+      "unit_price": "38.50",
+      "amount": "462.00",
+      "confidence": 0.92,
+      "page": 1,
+      "bbox": [
+        0.0874,
+        0.34505,
+        0.8245,
+        0.01238
+      ]
+    },
+    {
+      "description": "Silicone baking mat 600x400 mm",
+      "quantity": "20",
+      "unit_price": "14.90",
+      "amount": "298.00",
+      "confidence": 0.92,
+      "page": 1,
+      "bbox": [
+        0.0874,
+        0.36693,
+        0.8245,
+        0.01238
+      ]
+    },
+    {
+      "description": "Bread proofing basket, round 22 cm",
+      "quantity": "30",
+      "unit_price": "11.25",
+      "amount": "337.50",
+      "confidence": 0.92,
+      "page": 1,
+      "bbox": [
+        0.0874,
+        0.38882,
+        0.8245,
+        0.01238
+      ]
+    }
+  ],
+  "category": null,
+  "warnings": []
+}
