@@ -4,55 +4,55 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Domain\TaxId\TaxId;
 use App\Models\Vendor;
 
 /**
  * Links a document to a vendor record: tax id first, then the cleaned-up name.
+ * It never edits an existing vendor, so a document nobody has checked cannot rewrite who a vendor is.
  */
 class VendorMatcher
 {
     public function match(?string $name, ?string $taxId): ?Vendor
     {
-        $name = $name !== null ? trim($name) : null;
-        $taxId = $taxId !== null ? preg_replace('/[\s\-]/', '', $taxId) : null;
-        if (($name === null || $name === '') && ($taxId === null || $taxId === '')) {
+        $name = $name !== null ? trim($name) : '';
+        $taxId = TaxId::normalize($taxId);
+        if ($name === '' && $taxId === null) {
             return null;
         }
 
-        if ($taxId) {
+        if ($taxId !== null) {
             $vendor = Vendor::query()->where('tax_id', $taxId)->first();
             if ($vendor) {
                 return $vendor;
             }
         }
 
-        $normalized = $name ? Vendor::normalize($name) : '';
+        $normalized = $name !== '' ? Vendor::normalize($name) : '';
         if ($normalized !== '') {
-            $vendor = Vendor::query()->where('normalized_name', $normalized)->first();
+            $byName = Vendor::query()->where('normalized_name', $normalized)->get();
+            // same name with a different tax id is a different company (or a lookalike), not a match
+            $vendor = $byName->first(fn (Vendor $v) => $v->tax_id === null || $taxId === null || $v->tax_id === $taxId);
             if ($vendor) {
-                if ($taxId && ! $vendor->tax_id) {
-                    $vendor->update(['tax_id' => $taxId]);
-                }
-
                 return $vendor;
             }
         }
 
-        if (! $name) {
+        if ($name === '') {
             return null;
         }
 
         return Vendor::create([
             'name' => $name,
             'normalized_name' => $normalized,
-            'tax_id' => $taxId ?: null,
+            'tax_id' => $taxId,
             'country' => $this->guessCountry($taxId),
         ]);
     }
 
     private function guessCountry(?string $taxId): ?string
     {
-        if (! $taxId) {
+        if ($taxId === null) {
             return null;
         }
         if (preg_match('/^\d{10}$|^\d{12}$/', $taxId)) {

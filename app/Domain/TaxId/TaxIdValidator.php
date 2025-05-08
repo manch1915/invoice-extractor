@@ -20,7 +20,7 @@ final class TaxIdValidator
 
     public function check(string $value): TaxIdCheck
     {
-        $id = strtoupper((string) preg_replace('/[\s\-.]/', '', $value));
+        $id = TaxId::normalize($value) ?? '';
 
         if (preg_match('/^\d{10}$|^\d{12}$/', $id)) {
             return new TaxIdCheck(TaxIdKind::Inn, $this->innChecksumOk($id));

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Documents;
 
 use App\Domain\Money\Minor;
+use App\Domain\TaxId\TaxId;
 use App\Enums\DocumentStatus;
 use App\Enums\FieldKey;
 use App\Enums\FieldStatus;
@@ -144,9 +145,9 @@ class ExtractionApplier
 
         $document->fill([
             'vendor_name' => $get(FieldKey::VendorName),
-            'vendor_tax_id' => $get(FieldKey::VendorTaxId),
+            'vendor_tax_id' => TaxId::normalize($get(FieldKey::VendorTaxId)),
             'buyer_name' => $get(FieldKey::BuyerName),
-            'buyer_tax_id' => $get(FieldKey::BuyerTaxId),
+            'buyer_tax_id' => TaxId::normalize($get(FieldKey::BuyerTaxId)),
             'document_number' => $get(FieldKey::DocumentNumber),
             'issue_date' => $get(FieldKey::IssueDate),
             'due_date' => $get(FieldKey::DueDate),

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Domain\Money\Minor;
+use App\Domain\TaxId\TaxId;
 use App\Enums\FieldKey;
 use DateTimeImmutable;
 use Illuminate\Validation\ValidationException;
@@ -26,7 +27,7 @@ class FieldNormalizer
             $key->isDate() => $this->date($key, $value),
             $key === FieldKey::TaxRate => $this->rate($value),
             $key === FieldKey::Currency => $this->currency($value),
-            $key === FieldKey::VendorTaxId, $key === FieldKey::BuyerTaxId => strtoupper((string) preg_replace('/[\s\-.]/', '', $value)),
+            $key === FieldKey::VendorTaxId, $key === FieldKey::BuyerTaxId => TaxId::normalize($value),
             default => mb_substr($value, 0, 255),
         };
     }
