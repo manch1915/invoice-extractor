@@ -9,6 +9,7 @@ from numpy.typing import NDArray
 Image = NDArray[Any]
 
 MAX_OCR_PIXELS = 40_000_000
+OCR_WIDTH = 2000
 
 
 def order_corners(pts: NDArray[np.float32]) -> NDArray[np.float32]:
@@ -83,8 +84,11 @@ def rotate(img: Image, angle: float) -> Image:
 
 def flatten_light(gray: Image) -> Image:
     """Divide out uneven lighting and shadows so the page background becomes white."""
-    kernel = max(31, (min(gray.shape[:2]) // 25) | 1)
-    background = cv2.medianBlur(gray, kernel)
+    # the background varies slowly, so estimate it on a small copy and scale it back up
+    small = cv2.resize(gray, None, fx=0.25, fy=0.25, interpolation=cv2.INTER_AREA)
+    kernel = max(9, (min(small.shape[:2]) // 25) | 1)
+    background = cv2.medianBlur(small, kernel)
+    background = cv2.resize(background, (gray.shape[1], gray.shape[0]), interpolation=cv2.INTER_LINEAR)
     return cv2.divide(gray, background, scale=255)
 
 
@@ -100,13 +104,27 @@ def straighten(img: Image) -> tuple[Image, bool]:
 
 def for_ocr(img: Image) -> Image:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray = flatten_light(gray)
-    # Tesseract likes capital letters around 30 px tall; phone photos of A4 are often smaller.
-    if gray.shape[1] < 1800:
-        factor = min(1800 / gray.shape[1], 3.0, (MAX_OCR_PIXELS / gray.size) ** 0.5)
-        if factor > 1:
-            gray = cv2.resize(gray, None, fx=factor, fy=factor, interpolation=cv2.INTER_CUBIC)
-    return cv2.fastNlMeansDenoising(gray, h=12)
+    # About 2000 px across an A4 page gives Tesseract ~30 px capitals: smaller loses letters,
+    # larger only costs time.
+    factor = min(OCR_WIDTH / gray.shape[1], 3.0, (MAX_OCR_PIXELS / gray.size) ** 0.5)
+    if abs(factor - 1) > 0.05:
+        interpolation = cv2.INTER_CUBIC if factor > 1 else cv2.INTER_AREA
+        gray = cv2.resize(gray, None, fx=factor, fy=factor, interpolation=interpolation)
+    gray = cv2.medianBlur(flatten_light(gray), 3)
+    # scanner noise turns into thousands of tiny blobs; a clean black-and-white page reads ~3x faster
+    binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    return remove_rules(binary)
+
+
+def remove_rules(binary: Image) -> Image:
+    """Erase table borders. Tesseract reads them as | [ ] and loses the header row next to them."""
+    ink = cv2.bitwise_not(binary)
+    h, w = ink.shape
+    # kernels longer than any letter stroke (text is ~30-50 px tall here), shorter than a table border
+    horizontal = cv2.morphologyEx(ink, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (max(80, w // 20), 1)))
+    vertical = cv2.morphologyEx(ink, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (1, max(80, h // 30))))
+    rules = cv2.dilate(cv2.bitwise_or(horizontal, vertical), np.ones((3, 3), np.uint8))
+    return cv2.bitwise_not(cv2.bitwise_and(ink, cv2.bitwise_not(rules)))
 
 
 def fit_width(img: Image, width: int) -> tuple[Image, float]:
