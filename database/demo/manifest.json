@@ -1,0 +1,795 @@
+[
+  {
+    "file": "melnitsa-0712.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «Мельница Север»",
+      "vendor_tax_id": "7813456723",
+      "document_number": "1184",
+      "issue_date": "2026-07-12",
+      "due_date": "2026-07-19",
+      "currency": "RUB",
+      "subtotal": "92345.45",
+      "tax_amount": "9234.55",
+      "total": "101580.00",
+      "line_items": 3,
+      "category": "raw_materials"
+    }
+  },
+  {
+    "file": "melnitsa-0809-scan.pdf",
+    "quality": "scan",
+    "notes": [],
+    "expected": {
+      "doc_type": "waybill",
+      "vendor_name": "ООО «Мельница Север»",
+      "vendor_tax_id": "7813456723",
+      "document_number": "1302",
+      "issue_date": "2026-08-09",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "90227.27",
+      "tax_amount": "9022.73",
+      "total": "99250.00",
+      "line_items": 2,
+      "category": "raw_materials"
+    }
+  },
+  {
+    "file": "melnitsa-0914-photo.jpg",
+    "quality": "photo",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «Мельница Север»",
+      "vendor_tax_id": "7813456723",
+      "document_number": "1455",
+      "issue_date": "2026-09-14",
+      "due_date": "2026-09-21",
+      "currency": "RUB",
+      "subtotal": "113309.09",
+      "tax_amount": "11330.91",
+      "total": "124640.00",
+      "line_items": 3,
+      "category": "raw_materials"
+    }
+  },
+  {
+    "file": "melnitsa-1012.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «Мельница Север»",
+      "vendor_tax_id": "7813456723",
+      "document_number": "1597",
+      "issue_date": "2026-10-12",
+      "due_date": "2026-10-19",
+      "currency": "RUB",
+      "subtotal": "93245.45",
+      "tax_amount": "9324.55",
+      "total": "102570.00",
+      "line_items": 2,
+      "category": "raw_materials"
+    }
+  },
+  {
+    "file": "moloko-0721.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "waybill",
+      "vendor_name": "ООО «Молочный двор»",
+      "vendor_tax_id": "5047239185",
+      "document_number": "МД-3381",
+      "issue_date": "2026-07-21",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "39523.64",
+      "tax_amount": "3952.36",
+      "total": "43476.00",
+      "line_items": 3,
+      "category": "raw_materials"
+    }
+  },
+  {
+    "file": "moloko-0825-scan.pdf",
+    "quality": "scan",
+    "notes": [
+      "printed total does not match the lines"
+    ],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «Молочный двор»",
+      "vendor_tax_id": "5047239185",
+      "document_number": "МД-3520",
+      "issue_date": "2026-08-25",
+      "due_date": "2026-09-01",
+      "currency": "RUB",
+      "subtotal": "47154.55",
+      "tax_amount": "4715.45",
+      "total": "53750.00",
+      "line_items": 3,
+      "category": "raw_materials"
+    }
+  },
+  {
+    "file": "moloko-1003.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «Молочный двор»",
+      "vendor_tax_id": "5047239185",
+      "document_number": "МД-3697",
+      "issue_date": "2026-10-03",
+      "due_date": "2026-10-10",
+      "currency": "RUB",
+      "subtotal": "48481.82",
+      "tax_amount": "4848.18",
+      "total": "53330.00",
+      "line_items": 3,
+      "category": "raw_materials"
+    }
+  },
+  {
+    "file": "sokolova-0803.pdf",
+    "quality": "clean",
+    "notes": [
+      "sole trader, no VAT"
+    ],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ИП Соколова Анна Викторовна",
+      "vendor_tax_id": "500312774525",
+      "document_number": "47",
+      "issue_date": "2026-08-03",
+      "due_date": "2026-08-10",
+      "currency": "RUB",
+      "subtotal": "30400.00",
+      "tax_amount": "0.00",
+      "total": "30400.00",
+      "line_items": 3,
+      "category": "packaging"
+    }
+  },
+  {
+    "file": "sokolova-1001-photo.jpg",
+    "quality": "photo",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ИП Соколова Анна Викторовна",
+      "vendor_tax_id": "500312774525",
+      "document_number": "63",
+      "issue_date": "2026-10-01",
+      "due_date": "2026-10-08",
+      "currency": "RUB",
+      "subtotal": "33000.00",
+      "tax_amount": "0.00",
+      "total": "33000.00",
+      "line_items": 2,
+      "category": "packaging"
+    }
+  },
+  {
+    "file": "upaksnab-0918.pdf",
+    "quality": "clean",
+    "notes": [
+      "vendor INN has a wrong check digit"
+    ],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «УпакСнаб»",
+      "vendor_tax_id": "7728510344",
+      "document_number": "УС-0912",
+      "issue_date": "2026-09-18",
+      "due_date": "2026-09-25",
+      "currency": "RUB",
+      "subtotal": "11400.00",
+      "tax_amount": "2280.00",
+      "total": "13680.00",
+      "line_items": 2,
+      "category": "packaging"
+    }
+  },
+  {
+    "file": "kanc-0715.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «КанцМаркет»",
+      "vendor_tax_id": "7719053389",
+      "document_number": "КМ-20417",
+      "issue_date": "2026-07-15",
+      "due_date": "2026-07-22",
+      "currency": "RUB",
+      "subtotal": "7925.00",
+      "tax_amount": "1585.00",
+      "total": "9510.00",
+      "line_items": 3,
+      "category": "office"
+    }
+  },
+  {
+    "file": "kanc-0929.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «КанцМаркет»",
+      "vendor_tax_id": "7719053389",
+      "document_number": "КМ-21688",
+      "issue_date": "2026-09-29",
+      "due_date": "2026-10-06",
+      "currency": "RUB",
+      "subtotal": "5001.67",
+      "tax_amount": "1000.33",
+      "total": "6002.00",
+      "line_items": 3,
+      "category": "office"
+    }
+  },
+  {
+    "file": "kanc-0929-copy-scan.pdf",
+    "quality": "scan",
+    "notes": [
+      "same invoice sent again as a scan"
+    ],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «КанцМаркет»",
+      "vendor_tax_id": "7719053389",
+      "document_number": "КМ-21688",
+      "issue_date": "2026-09-29",
+      "due_date": "2026-10-06",
+      "currency": "RUB",
+      "subtotal": "5001.67",
+      "tax_amount": "1000.33",
+      "total": "6002.00",
+      "line_items": 3,
+      "category": "office"
+    }
+  },
+  {
+    "file": "energo-07.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "АО «Энергосбыт Центр»",
+      "vendor_tax_id": "7726340190",
+      "document_number": "ЭС-07/58812",
+      "issue_date": "2026-07-31",
+      "due_date": "2026-08-15",
+      "currency": "RUB",
+      "subtotal": "47829.00",
+      "tax_amount": "9565.80",
+      "total": "57394.80",
+      "line_items": 1,
+      "category": "utilities"
+    }
+  },
+  {
+    "file": "energo-08-scan.pdf",
+    "quality": "scan",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "АО «Энергосбыт Центр»",
+      "vendor_tax_id": "7726340190",
+      "document_number": "ЭС-08/60174",
+      "issue_date": "2026-08-31",
+      "due_date": "2026-09-15",
+      "currency": "RUB",
+      "subtotal": "50734.50",
+      "tax_amount": "10146.90",
+      "total": "60881.40",
+      "line_items": 1,
+      "category": "utilities"
+    }
+  },
+  {
+    "file": "energo-09.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "АО «Энергосбыт Центр»",
+      "vendor_tax_id": "7726340190",
+      "document_number": "ЭС-09/61533",
+      "issue_date": "2026-09-30",
+      "due_date": "2026-10-15",
+      "currency": "RUB",
+      "subtotal": "50084.00",
+      "tax_amount": "10016.80",
+      "total": "60100.80",
+      "line_items": 1,
+      "category": "utilities"
+    }
+  },
+  {
+    "file": "telecom-08.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "act",
+      "vendor_name": "ООО «Связь-Телеком»",
+      "vendor_tax_id": "7704917558",
+      "document_number": "СТ-0826",
+      "issue_date": "2026-08-31",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "3458.33",
+      "tax_amount": "691.67",
+      "total": "4150.00",
+      "line_items": 2,
+      "category": "telecom"
+    }
+  },
+  {
+    "file": "telecom-09-photo.jpg",
+    "quality": "photo",
+    "notes": [],
+    "expected": {
+      "doc_type": "act",
+      "vendor_name": "ООО «Связь-Телеком»",
+      "vendor_tax_id": "7704917558",
+      "document_number": "СТ-0943",
+      "issue_date": "2026-09-30",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "3458.33",
+      "tax_amount": "691.67",
+      "total": "4150.00",
+      "line_items": 2,
+      "category": "telecom"
+    }
+  },
+  {
+    "file": "arenda-08.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «Арендный центр Профсоюзный»",
+      "vendor_tax_id": "7727410637",
+      "document_number": "А-0812",
+      "issue_date": "2026-08-01",
+      "due_date": "2026-08-05",
+      "currency": "RUB",
+      "subtotal": "179166.67",
+      "tax_amount": "35833.33",
+      "total": "215000.00",
+      "line_items": 1,
+      "category": "rent"
+    }
+  },
+  {
+    "file": "arenda-09.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «Арендный центр Профсоюзный»",
+      "vendor_tax_id": "7727410637",
+      "document_number": "А-0913",
+      "issue_date": "2026-09-01",
+      "due_date": "2026-09-05",
+      "currency": "RUB",
+      "subtotal": "179166.67",
+      "tax_amount": "35833.33",
+      "total": "215000.00",
+      "line_items": 1,
+      "category": "rent"
+    }
+  },
+  {
+    "file": "arenda-10-scan.pdf",
+    "quality": "scan",
+    "notes": [
+      "VAT charged as 20% of the gross total instead of 20/120"
+    ],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «Арендный центр Профсоюзный»",
+      "vendor_tax_id": "7727410637",
+      "document_number": "А-1009",
+      "issue_date": "2026-10-01",
+      "due_date": "2026-10-05",
+      "currency": "RUB",
+      "subtotal": "186912.00",
+      "tax_amount": "46728.00",
+      "total": "233640.00",
+      "line_items": 2,
+      "category": "rent"
+    }
+  },
+  {
+    "file": "clean-08.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "act",
+      "vendor_name": "ООО «Клининг Про»",
+      "vendor_tax_id": "7730188478",
+      "document_number": "КП-1408",
+      "issue_date": "2026-08-31",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "40833.33",
+      "tax_amount": "8166.67",
+      "total": "49000.00",
+      "line_items": 2,
+      "category": "cleaning"
+    }
+  },
+  {
+    "file": "clean-09-scan.pdf",
+    "quality": "scan",
+    "notes": [],
+    "expected": {
+      "doc_type": "act",
+      "vendor_name": "ООО «Клининг Про»",
+      "vendor_tax_id": "7730188478",
+      "document_number": "КП-1532",
+      "issue_date": "2026-09-30",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "41500.00",
+      "tax_amount": "8300.00",
+      "total": "49800.00",
+      "line_items": 2,
+      "category": "cleaning"
+    }
+  },
+  {
+    "file": "techservice-0904.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "act",
+      "vendor_name": "ООО «ТехСервис Плюс»",
+      "vendor_tax_id": "7722034812",
+      "document_number": "ТС-388",
+      "issue_date": "2026-09-04",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "21866.67",
+      "tax_amount": "4373.33",
+      "total": "26240.00",
+      "line_items": 3,
+      "category": "maintenance"
+    }
+  },
+  {
+    "file": "dostavka-0830.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «Быстрая доставка»",
+      "vendor_tax_id": "7734152803",
+      "document_number": "БД-77412",
+      "issue_date": "2026-08-30",
+      "due_date": "2026-09-06",
+      "currency": "RUB",
+      "subtotal": "43916.67",
+      "tax_amount": "8783.33",
+      "total": "52700.00",
+      "line_items": 1,
+      "category": "logistics"
+    }
+  },
+  {
+    "file": "dostavka-1015.pdf",
+    "quality": "clean",
+    "notes": [
+      "issue date typed as 2027"
+    ],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "ООО «Быстрая доставка»",
+      "vendor_tax_id": "7734152803",
+      "document_number": "БД-79055",
+      "issue_date": "2027-10-15",
+      "due_date": "2026-10-22",
+      "currency": "RUB",
+      "subtotal": "21958.33",
+      "tax_amount": "4391.67",
+      "total": "26350.00",
+      "line_items": 1,
+      "category": "logistics"
+    }
+  },
+  {
+    "file": "hyper-0811-photo.jpg",
+    "quality": "photo",
+    "notes": [],
+    "expected": {
+      "doc_type": "receipt",
+      "vendor_name": "ООО «Гипермаркет Восток»",
+      "vendor_tax_id": "7720901435",
+      "document_number": "4417",
+      "issue_date": "2026-08-11",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "1505.65",
+      "tax_amount": "301.13",
+      "total": "1806.78",
+      "line_items": 3,
+      "category": "cleaning"
+    }
+  },
+  {
+    "file": "hyper-1002.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "receipt",
+      "vendor_name": "ООО «Гипермаркет Восток»",
+      "vendor_tax_id": "7720901435",
+      "document_number": "5180",
+      "issue_date": "2026-10-02",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "1090.00",
+      "tax_amount": "218.00",
+      "total": "1308.00",
+      "line_items": 2,
+      "category": "cleaning"
+    }
+  },
+  {
+    "file": "azs-0907-photo.jpg",
+    "quality": "photo",
+    "notes": [],
+    "expected": {
+      "doc_type": "receipt",
+      "vendor_name": "ООО «Нефтьсервис-М»",
+      "vendor_tax_id": "7715229641",
+      "document_number": "0912",
+      "issue_date": "2026-09-07",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "2044.27",
+      "tax_amount": "408.85",
+      "total": "2453.12",
+      "line_items": 1,
+      "category": "fuel"
+    }
+  },
+  {
+    "file": "azs-1014-photo.jpg",
+    "quality": "blurry",
+    "notes": [],
+    "expected": {
+      "doc_type": "receipt",
+      "vendor_name": "ООО «Нефтьсервис-М»",
+      "vendor_tax_id": "7715229641",
+      "document_number": "1347",
+      "issue_date": "2026-10-14",
+      "due_date": null,
+      "currency": "RUB",
+      "subtotal": "3099.95",
+      "tax_amount": "619.99",
+      "total": "3719.94",
+      "line_items": 1,
+      "category": "fuel"
+    }
+  },
+  {
+    "file": "bakeware-0728.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "Bakeware Direct Ltd",
+      "vendor_tax_id": "GB284617539",
+      "document_number": "BD-24-1187",
+      "issue_date": "2026-07-28",
+      "due_date": "2026-08-27",
+      "currency": "GBP",
+      "subtotal": "1097.50",
+      "tax_amount": "219.50",
+      "total": "1317.00",
+      "line_items": 3,
+      "category": "equipment"
+    }
+  },
+  {
+    "file": "bakeware-0921-scan.pdf",
+    "quality": "scan",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "Bakeware Direct Ltd",
+      "vendor_tax_id": "GB284617539",
+      "document_number": "BD-24-1342",
+      "issue_date": "2026-09-21",
+      "due_date": "2026-10-21",
+      "currency": "GBP",
+      "subtotal": "351.00",
+      "tax_amount": "70.20",
+      "total": "421.20",
+      "line_items": 2,
+      "category": "equipment"
+    }
+  },
+  {
+    "file": "hoffmann-0818.pdf",
+    "quality": "clean",
+    "notes": [
+      "export, zero-rated"
+    ],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "Hoffmann Küchentechnik GmbH",
+      "vendor_tax_id": "DE318452907",
+      "document_number": "RE-2026-0418",
+      "issue_date": "2026-08-18",
+      "due_date": "2026-09-17",
+      "currency": "EUR",
+      "subtotal": "5530.00",
+      "tax_amount": "0.00",
+      "total": "5530.00",
+      "line_items": 2,
+      "category": "equipment"
+    }
+  },
+  {
+    "file": "canvasly-07.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "Canvasly Inc.",
+      "vendor_tax_id": "842219573",
+      "document_number": "CNV-58201",
+      "issue_date": "2026-07-09",
+      "due_date": null,
+      "currency": "USD",
+      "subtotal": "45.00",
+      "tax_amount": "0.00",
+      "total": "45.00",
+      "line_items": 1,
+      "category": "software"
+    }
+  },
+  {
+    "file": "canvasly-08.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "Canvasly Inc.",
+      "vendor_tax_id": "842219573",
+      "document_number": "CNV-61744",
+      "issue_date": "2026-08-09",
+      "due_date": null,
+      "currency": "USD",
+      "subtotal": "45.00",
+      "tax_amount": "0.00",
+      "total": "45.00",
+      "line_items": 1,
+      "category": "software"
+    }
+  },
+  {
+    "file": "canvasly-09-photo.jpg",
+    "quality": "photo",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "Canvasly Inc.",
+      "vendor_tax_id": "842219573",
+      "document_number": "CNV-65310",
+      "issue_date": "2026-09-09",
+      "due_date": null,
+      "currency": "USD",
+      "subtotal": "60.00",
+      "tax_amount": "0.00",
+      "total": "60.00",
+      "line_items": 1,
+      "category": "software"
+    }
+  },
+  {
+    "file": "cloudnest-0901.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "Cloudnest Hosting LLC",
+      "vendor_tax_id": "871046628",
+      "document_number": "INV-2026-09-3318",
+      "issue_date": "2026-09-01",
+      "due_date": null,
+      "currency": "USD",
+      "subtotal": "75.60",
+      "tax_amount": "0.00",
+      "total": "75.60",
+      "line_items": 3,
+      "category": "software"
+    }
+  },
+  {
+    "file": "printhouse-0905.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "PrintHouse Studio Ltd",
+      "vendor_tax_id": "GB192440861",
+      "document_number": "PH-0931",
+      "issue_date": "2026-09-05",
+      "due_date": "2026-09-19",
+      "currency": "GBP",
+      "subtotal": "574.00",
+      "tax_amount": "114.80",
+      "total": "688.80",
+      "line_items": 3,
+      "category": "marketing"
+    }
+  },
+  {
+    "file": "adreach-0930-scan.pdf",
+    "quality": "scan",
+    "notes": [],
+    "expected": {
+      "doc_type": "invoice",
+      "vendor_name": "AdReach Media Ltd",
+      "vendor_tax_id": "GB377902145",
+      "document_number": "AR-112094",
+      "issue_date": "2026-09-30",
+      "due_date": "2026-10-14",
+      "currency": "GBP",
+      "subtotal": "600.00",
+      "tax_amount": "120.00",
+      "total": "720.00",
+      "line_items": 2,
+      "category": "marketing"
+    }
+  },
+  {
+    "file": "cafe-0916-photo.jpg",
+    "quality": "photo",
+    "notes": [],
+    "expected": {
+      "doc_type": "receipt",
+      "vendor_name": "Corner Bean Cafe",
+      "vendor_tax_id": null,
+      "document_number": "0287",
+      "issue_date": "2026-09-16",
+      "due_date": null,
+      "currency": "USD",
+      "subtotal": "21.00",
+      "tax_amount": "1.86",
+      "total": "22.86",
+      "line_items": 3,
+      "category": "meals"
+    }
+  },
+  {
+    "file": "paperco-1008.pdf",
+    "quality": "clean",
+    "notes": [],
+    "expected": {
+      "doc_type": "receipt",
+      "vendor_name": "Paper & Co Stationers",
+      "vendor_tax_id": "GB305661078",
+      "document_number": "5521",
+      "issue_date": "2026-10-08",
+      "due_date": null,
+      "currency": "GBP",
+      "subtotal": "31.23",
+      "tax_amount": "6.25",
+      "total": "37.48",
+      "line_items": 2,
+      "category": "office"
+    }
+  }
+]
