@@ -118,11 +118,33 @@ def test_daily_budget_stops_calls(tmp_path: Path) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         nonlocal calls
         calls += 1
-        return httpx.Response(200, json=completion(model_answer(), tokens=5000))
+        return httpx.Response(200, json=completion(model_answer(), tokens=19_000))
 
-    engine = engine_with(handler, tmp_path, limit=4000)
+    engine = engine_with(handler, tmp_path, limit=20_000)
     assert run(engine).document.engine == "llm"
+    assert engine.budget.used_today() == 19_000
+    # the next call would need more than the 1 000 tokens left, so it is not made at all
     assert run(engine).document.engine == "rules"
     assert calls == 1
     with pytest.raises(BudgetExceededError):
-        engine.budget.ensure_available()
+        engine.budget.reserve(2_000)
+
+
+def test_failed_or_unmetered_calls_still_count(tmp_path: Path) -> None:
+    engine = engine_with(lambda r: httpx.Response(503, text="overloaded"), tmp_path)
+    run(engine)
+    after_failure = engine.budget.used_today()
+    assert after_failure > 2_000  # the reservation stays: the provider may still bill a failed call
+
+    no_usage = completion(model_answer())
+    del no_usage["usage"]
+    engine = engine_with(lambda r: httpx.Response(200, json=no_usage), tmp_path)
+    run(engine)
+    assert engine.budget.used_today() > after_failure
+
+
+def test_damaged_ledger_fails_closed(tmp_path: Path) -> None:
+    budget = TokenBudget(str(tmp_path / "budget.json"), 100_000)
+    (tmp_path / "budget.json").write_text("{not json", encoding="utf-8")
+    with pytest.raises(BudgetExceededError):
+        budget.reserve(10)

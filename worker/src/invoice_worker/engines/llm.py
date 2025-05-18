@@ -19,6 +19,8 @@ from invoice_worker.schemas import CategorySuggestion, DocType, ExtractedField, 
 log = logging.getLogger(__name__)
 
 MAX_PROMPT_CHARS = 14_000
+MAX_ANSWER_TOKENS = 2_000
+MAX_CATEGORIES = 60
 AMOUNT_KEYS = {FieldKey.SUBTOTAL, FieldKey.TAX_AMOUNT, FieldKey.TOTAL, FieldKey.TAX_RATE}
 DATE_KEYS = {FieldKey.ISSUE_DATE, FieldKey.DUE_DATE}
 
@@ -91,41 +93,52 @@ class LlmEngine:
         return cls(client, settings.llm_model, TokenBudget(settings.llm_budget_file, settings.llm_daily_token_limit))
 
     def extract(self, layout: DocumentLayout, context: EngineContext) -> EngineResult:
-        self.budget.ensure_available()
-        lines = [f"[{ln.index}] {ln.text}" for ln in layout.lines()]
-        body = "\n".join(lines)[:MAX_PROMPT_CHARS]
-        categories = "\n".join(f"- {c.code}: {c.name}" for c in context.categories) or "(none)"
+        categories = context.categories[:MAX_CATEGORIES]
+        listing = "\n".join(f"- {c.code[:40]}: {c.name[:80]}" for c in categories) or "(none)"
+        document = "\n".join(f"[{ln.index}] {ln.text}" for ln in layout.lines())
+        user = f"Expense categories:\n{listing}\n\nDocument:\n{document}"[:MAX_PROMPT_CHARS]
         messages = [
             {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": f"Expense categories:\n{categories}\n\nDocument:\n{body}"},
+            {"role": "user", "content": user},
         ]
-        payload = self._complete(messages, [c.code for c in context.categories])
-        return self._to_result(payload, layout, {c.code for c in context.categories})
+        codes = [c.code[:40] for c in categories]
+        payload = self._complete(messages, codes)
+        return self._to_result(payload, layout, set(codes))
 
     def _complete(self, messages: list[dict[str, str]], codes: list[str]) -> dict[str, Any]:
+        schema = response_schema(codes)
         request: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "temperature": 0,
+            "max_tokens": MAX_ANSWER_TOKENS,
             "response_format": {
                 "type": "json_schema",
-                "json_schema": {"name": "document", "strict": True, "schema": response_schema(codes)},
+                "json_schema": {"name": "document", "strict": True, "schema": schema},
             },
         }
-        response = self.client.post("/chat/completions", json=request)
-        if response.status_code == 400 and "response_format" in response.text:
-            # some compatible providers only know json_object mode
-            request["response_format"] = {"type": "json_object"}
-            request["messages"] = [
-                *messages[:-1],
-                {"role": "user", "content": messages[-1]["content"] + "\n\nReply with JSON matching this schema:\n"
-                 + json.dumps(response_schema(codes))},
-            ]  # fmt: skip
+        # Book the worst case before spending money; the real usage replaces it afterwards.
+        prompt_chars = sum(len(m["content"]) for m in messages) + len(json.dumps(schema))
+        reserved = self.budget.reserve(prompt_chars // 3 + MAX_ANSWER_TOKENS)
+        used: int | None = None
+        try:
             response = self.client.post("/chat/completions", json=request)
-        response.raise_for_status()
-        data = response.json()
-        self.budget.spend(int(data.get("usage", {}).get("total_tokens", 0)))
-        content = data["choices"][0]["message"]["content"]
+            if response.status_code == 400 and "response_format" in response.text:
+                # some compatible providers only know json_object mode
+                request["response_format"] = {"type": "json_object"}
+                request["messages"] = [
+                    *messages[:-1],
+                    {"role": "user", "content": messages[-1]["content"] + "\n\nReply with JSON matching this schema:\n"
+                     + json.dumps(schema)},
+                ]  # fmt: skip
+                response = self.client.post("/chat/completions", json=request)
+            response.raise_for_status()
+            data = response.json()
+            usage = data.get("usage") or {}
+            used = int(usage["total_tokens"]) if isinstance(usage.get("total_tokens"), int) else None
+            content = data["choices"][0]["message"]["content"]
+        finally:
+            self.budget.settle(reserved, used)
         parsed = json.loads(content)
         if not isinstance(parsed, dict):
             raise ValueError("model returned a non-object")

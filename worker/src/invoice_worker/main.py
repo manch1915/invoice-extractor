@@ -60,7 +60,11 @@ async def extract(
 
     try:
         parsed = json.loads(categories)
-        context = EngineContext(categories=[Category(code=str(c["code"]), name=str(c["name"])) for c in parsed])
+        if not isinstance(parsed, list) or len(parsed) > 100:
+            raise ValueError("expected a list of at most 100 categories")
+        context = EngineContext(
+            categories=[Category(code=str(c["code"])[:40], name=str(c["name"])[:80]) for c in parsed]
+        )
     except (ValueError, KeyError, TypeError) as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "categories must be a JSON list") from exc
 
