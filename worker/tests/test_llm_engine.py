@@ -148,3 +148,13 @@ def test_damaged_ledger_fails_closed(tmp_path: Path) -> None:
     (tmp_path / "budget.json").write_text("{not json", encoding="utf-8")
     with pytest.raises(BudgetExceededError):
         budget.reserve(10)
+
+
+def test_settling_after_midnight_does_not_refund_the_new_day(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    budget = TokenBudget(str(tmp_path / "budget.json"), 100_000)
+    reservation = budget.reserve(5_000)
+    monkeypatch.setattr(budget, "_today", lambda: "2099-01-02")
+    budget.settle(reservation, 1_000)
+    assert budget.used_today() == 0
+    budget.settle(reservation, 7_000)
+    assert budget.used_today() == 2_000

@@ -117,32 +117,36 @@ class LlmEngine:
                 "json_schema": {"name": "document", "strict": True, "schema": schema},
             },
         }
-        # Book the worst case before spending money; the real usage replaces it afterwards.
-        prompt_chars = sum(len(m["content"]) for m in messages) + len(json.dumps(schema))
-        reserved = self.budget.reserve(prompt_chars // 3 + MAX_ANSWER_TOKENS)
-        used: int | None = None
-        try:
-            response = self.client.post("/chat/completions", json=request)
-            if response.status_code == 400 and "response_format" in response.text:
-                # some compatible providers only know json_object mode
-                request["response_format"] = {"type": "json_object"}
-                request["messages"] = [
-                    *messages[:-1],
-                    {"role": "user", "content": messages[-1]["content"] + "\n\nReply with JSON matching this schema:\n"
-                     + json.dumps(schema)},
-                ]  # fmt: skip
-                response = self.client.post("/chat/completions", json=request)
-            response.raise_for_status()
-            data = response.json()
-            usage = data.get("usage") or {}
-            used = int(usage["total_tokens"]) if isinstance(usage.get("total_tokens"), int) else None
-            content = data["choices"][0]["message"]["content"]
-        finally:
-            self.budget.settle(reserved, used)
+        response = self._post(request)
+        if response.status_code == 400 and "response_format" in response.text:
+            # some compatible providers only know json_object mode
+            request["response_format"] = {"type": "json_object"}
+            request["messages"] = [
+                *messages[:-1],
+                {"role": "user", "content": messages[-1]["content"] + "\n\nReply with JSON matching this schema:\n"
+                 + json.dumps(schema)},
+            ]  # fmt: skip
+            response = self._post(request)
+        response.raise_for_status()
+        content = response.json()["choices"][0]["message"]["content"]
         parsed = json.loads(content)
         if not isinstance(parsed, dict):
             raise ValueError("model returned a non-object")
         return parsed
+
+    def _post(self, request: dict[str, Any]) -> httpx.Response:
+        """One billed call: book the worst case first, then replace it with the reported usage."""
+        # Cyrillic averages two to three characters per token, so half the length is an upper bound
+        reservation = self.budget.reserve(len(json.dumps(request, ensure_ascii=False)) // 2 + MAX_ANSWER_TOKENS)
+        used: int | None = None
+        try:
+            response = self.client.post("/chat/completions", json=request)
+            if response.is_success:
+                usage = response.json().get("usage") or {}
+                used = usage["total_tokens"] if isinstance(usage.get("total_tokens"), int) else None
+            return response
+        finally:
+            self.budget.settle(reservation, used)
 
     def _to_result(self, payload: dict[str, Any], layout: DocumentLayout, codes: set[str]) -> EngineResult:
         decimal_hint = detect_decimal_separator(layout.text)
