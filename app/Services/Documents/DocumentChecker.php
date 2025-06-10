@@ -91,9 +91,10 @@ class DocumentChecker
             ]);
         }
 
-        $stale = $existing->keys()->reject(fn (string $key) => isset($current[$key]));
+        // filter by array key: Eloquent's only() would match model ids instead
+        $stale = $existing->filter(fn (DocumentIssue $row, string $key) => ! isset($current[$key]));
         if ($stale->isNotEmpty()) {
-            $document->issues()->whereIn('id', $existing->only($stale->all())->pluck('id'))->delete();
+            $document->issues()->whereIn('id', $stale->modelKeys())->delete();
         }
 
         $duplicate = collect($issues)->first(fn (Issue $i) => $i->code->value === 'duplicate');
