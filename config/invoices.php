@@ -24,8 +24,8 @@ return [
 
     // Rough cost of typing a document by hand, used for the "time saved" figure.
     'manual_entry' => [
-        'seconds_per_document' => 150,
-        'seconds_per_line' => 20,
+        'seconds_per_document' => 240,
+        'seconds_per_line' => 25,
     ],
 
     'base_currency' => env('BASE_CURRENCY', 'RUB'),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Documents;
 
+use App\Domain\Money\Minor;
 use App\Enums\CategorySource;
 use App\Enums\DocumentStatus;
 use App\Enums\FieldKey;
@@ -52,6 +53,9 @@ class ReviewService
                 $changes += ['bbox' => $bbox, 'page' => $page];
             }
             $field->update($changes);
+            if ($key === FieldKey::TaxAmount || $key === FieldKey::Total) {
+                $this->recalculateDerivedSubtotal($document);
+            }
 
             $this->applier->copyFieldsToColumns($document);
             if ($key === FieldKey::VendorName || $key === FieldKey::VendorTaxId) {
@@ -135,6 +139,24 @@ class ReviewService
     {
         $document->update(['status' => DocumentStatus::NeedsReview, 'reviewed_at' => null, 'reviewed_by' => null]);
         $this->audit->record('document.reopened', $document, [], $user);
+    }
+
+    /**
+     * Russian invoices often print only the total and "в т.ч. НДС"; the net amount was computed
+     * from them, so it follows when a person corrects either number.
+     */
+    private function recalculateDerivedSubtotal(Document $document): void
+    {
+        $fields = $document->fields()->whereIn('key', [FieldKey::Subtotal->value, FieldKey::TaxAmount->value, FieldKey::Total->value])
+            ->get()->keyBy(fn ($f) => $f->key->value);
+        $subtotal = $fields->get(FieldKey::Subtotal->value);
+        $tax = Minor::tryFromDecimal($fields->get(FieldKey::TaxAmount->value)?->value);
+        $total = Minor::tryFromDecimal($fields->get(FieldKey::Total->value)?->value);
+
+        if ($subtotal === null || $subtotal->raw !== null || $subtotal->status->isHumanChecked() || $tax === null || $total === null) {
+            return;
+        }
+        $subtotal->update(['value' => Minor::toDecimal($total - $tax), 'status' => FieldStatus::Auto]);
     }
 
     private function refresh(Document $document): void

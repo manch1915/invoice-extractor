@@ -113,7 +113,9 @@ class ExtractionApplier
                 'confidence' => $field->confidence,
                 'page' => $field->page,
                 'bbox' => $field->bbox,
-                'status' => DocumentChecker::fieldNeedsReview($field->confidence, FieldStatus::Auto)
+                // an optional field that is simply not on the document (no due date on a receipt) is not a doubt
+                'status' => ($field->value !== null || $key->isKey())
+                    && DocumentChecker::fieldNeedsReview($field->confidence, FieldStatus::Auto)
                     ? FieldStatus::NeedsReview
                     : FieldStatus::Auto,
             ]);
