@@ -16,7 +16,7 @@ void createInertiaApp({
             throw new Error(`Unknown page: ${name}`);
         }
         const page = (await loader()).default;
-        if (page.layout === undefined) {
+        if (page.layout === undefined && !name.startsWith('Auth/')) {
             page.layout = AppLayout;
         }
         return page;
