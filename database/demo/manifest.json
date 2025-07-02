@@ -30,8 +30,8 @@
       "issue_date": "2026-08-09",
       "due_date": null,
       "currency": "RUB",
-      "subtotal": "90227.27",
-      "tax_amount": "9022.73",
+      "subtotal": "90227.20",
+      "tax_amount": "9022.80",
       "total": "99250.00",
       "line_items": 2,
       "category": "raw_materials"
@@ -87,8 +87,8 @@
       "issue_date": "2026-07-21",
       "due_date": null,
       "currency": "RUB",
-      "subtotal": "39523.64",
-      "tax_amount": "3952.36",
+      "subtotal": "39523.26",
+      "tax_amount": "3952.74",
       "total": "43476.00",
       "line_items": 3,
       "category": "raw_materials"

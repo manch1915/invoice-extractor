@@ -16,7 +16,7 @@ import cv2
 import matplotlib
 import numpy as np
 import pymupdf
-from data import BUYER_EN, BUYER_RU, DOCS, Doc, Party, V
+from data import BUYER_EN, BUYER_RU, DOCS, Doc, Item, Party, V
 from num2words import num2words
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
@@ -74,9 +74,23 @@ class Totals:
     lines_sum: Decimal
 
 
+def waybill_net_price(item: Item, rate: Decimal) -> Decimal:
+    return (item.price * 100 / (100 + rate)).quantize(CENT, ROUND_HALF_UP)
+
+
+def waybill_net(item: Item, rate: Decimal) -> Decimal:
+    return (waybill_net_price(item, rate) * item.qty).quantize(CENT, ROUND_HALF_UP)
+
+
 def totals_for(doc: Doc) -> Totals:
     lines_sum = sum((i.amount for i in doc.items), Decimal(0))
     rate = doc.vat_rate
+    if doc.template == "ru_waybill":
+        # a waybill sums its net and VAT columns, exactly as printed line by line
+        nets = [waybill_net(i, rate) for i in doc.items]
+        subtotal = sum(nets, Decimal(0))
+        vat = lines_sum - subtotal
+        return Totals(subtotal, vat, lines_sum, lines_sum)
     if doc.vat_included:
         total = lines_sum
         vat = (total * rate / (100 + rate)).quantize(CENT, ROUND_HALF_UP)
@@ -178,8 +192,8 @@ def ru_table(p: Page, y: float, doc: Doc, money: bool = True, waybill: bool = Fa
             p.text(xs[1] + 2, base + k * 3.6 * mm, ln, size=8)
         qty = f"{it.qty.normalize():f}".replace(".", ",")
         if waybill:
-            net_price = (it.price * 100 / (100 + rate)).quantize(CENT, ROUND_HALF_UP)
-            net = (net_price * it.qty).quantize(CENT, ROUND_HALF_UP)
+            net_price = waybill_net_price(it, rate)
+            net = waybill_net(it, rate)
             vat = (it.amount - net).quantize(CENT)
             cells = [it.unit, qty, ru_money(net_price), ru_money(net), f"{rate.normalize():f}%", ru_money(vat)]
             for i, val in enumerate(cells, start=2):
