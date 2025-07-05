@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property ?list<string> $keywords
  */
-#[Fillable(['code', 'name_en', 'name_ru', 'color', 'account_code', 'keywords'])]
+#[Fillable(['code', 'name_en', 'name_ru', 'color', 'account_code', 'account_1c', 'keywords'])]
 class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */

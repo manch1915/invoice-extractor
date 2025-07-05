@@ -21,6 +21,7 @@ class CategoryResource extends JsonResource
             'name_ru' => $this->name_ru,
             'color' => $this->color,
             'account_code' => $this->account_code,
+            'account_1c' => $this->account_1c,
         ];
     }
 }

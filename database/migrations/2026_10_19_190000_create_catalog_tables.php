@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name_en');
             $table->string('name_ru');
             $table->string('color', 9)->default('#6b7280');
-            $table->string('account_code', 20)->nullable()->comment('ledger account used by Xero and 1C exports');
+            $table->string('account_code', 20)->nullable()->comment('Xero account code');
+            $table->string('account_1c', 20)->nullable()->comment('1C cost account, e.g. 26 or 44.01');
             $table->json('keywords')->nullable();
             $table->timestamps();
         });
