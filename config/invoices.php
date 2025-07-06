@@ -50,22 +50,24 @@ return [
         'address' => env('IMAP_ADDRESS'),
     ],
 
+    // Redirect URI to register with both providers: {APP_URL}/integrations/{google|xero}/callback
     'google' => [
-        'client_id' => env('GOOGLE_CLIENT_ID'),
-        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT_URI', '/integrations/google/callback'),
+        'client_id' => env('GOOGLE_CLIENT_ID', ''),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET', ''),
     ],
 
     'xero' => [
-        'client_id' => env('XERO_CLIENT_ID'),
-        'client_secret' => env('XERO_CLIENT_SECRET'),
-        'redirect' => env('XERO_REDIRECT_URI', '/integrations/xero/callback'),
+        'client_id' => env('XERO_CLIENT_ID', ''),
+        'client_secret' => env('XERO_CLIENT_SECRET', ''),
     ],
 
     'demo' => [
         'enabled' => (bool) env('DEMO_MODE', false),
         'owner_email' => 'owner@demo.test',
         'accountant_email' => 'accountant@demo.test',
+        // On a public demo every visitor shares one workspace, so nobody should plug in a real
+        // Google or Xero account unless the operator switches this on.
+        'integrations' => (bool) env('DEMO_ALLOW_INTEGRATIONS', false),
     ],
 
 ];

@@ -6,6 +6,8 @@ namespace App\Providers;
 
 use App\Domain\Validation\DocumentValidator;
 use App\Enums\Role;
+use App\Infrastructure\Integrations\GoogleSheets;
+use App\Infrastructure\Integrations\Xero;
 use App\Infrastructure\Worker\WorkerClient;
 use App\Models\User;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -30,6 +32,17 @@ class AppServiceProvider extends ServiceProvider
             (string) config('invoices.worker.token'),
             (int) config('invoices.worker.timeout'),
             (string) config('invoices.worker.engine'),
+        ));
+
+        $this->app->bind(GoogleSheets::class, fn ($app) => new GoogleSheets(
+            $app->make(Http::class),
+            (string) config('invoices.google.client_id'),
+            (string) config('invoices.google.client_secret'),
+        ));
+        $this->app->bind(Xero::class, fn ($app) => new Xero(
+            $app->make(Http::class),
+            (string) config('invoices.xero.client_id'),
+            (string) config('invoices.xero.client_secret'),
         ));
     }
 
