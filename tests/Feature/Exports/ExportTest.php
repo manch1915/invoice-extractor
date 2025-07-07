@@ -72,6 +72,17 @@ it('neutralizes values that a spreadsheet would run as formulas', function () {
     expect($lines[1])->toContain(";\"'=HYPERLINK(");
 });
 
+it('keeps formula-looking text as plain text in Excel', function () {
+    $document = readyDocument();
+    $document->update(['vendor_name' => '=HYPERLINK("http://evil.test","open")']);
+
+    $export = runExport(ExportTarget::Xlsx, $document);
+
+    $cell = IOFactory::load(Storage::disk('local')->path($export->file_path))->getSheet(0)->getCell('C2');
+    expect($cell->getDataType())->toBe('s')
+        ->and($cell->getValue())->toBe('=HYPERLINK("http://evil.test","open")');
+});
+
 it('only exports approved documents', function () {
     $payload = workerFixture('kanc-0929');
     $payload['fields']['total']['confidence'] = 0.3;

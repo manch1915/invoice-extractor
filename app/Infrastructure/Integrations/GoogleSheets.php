@@ -53,12 +53,16 @@ class GoogleSheets extends OAuthProvider
         ];
     }
 
-    /** @param  list<list<string|float|int|null>>  $rows */
+    /**
+     * RAW keeps text from documents as text; USER_ENTERED would run a cell starting with = as a formula.
+     *
+     * @param  list<list<string|float|int|null>>  $rows
+     */
     public function append(string $token, string $spreadsheetId, string $sheet, array $rows): void
     {
         $range = rawurlencode("'{$sheet}'!A1");
         $this->http->withToken($token)->timeout(30)
-            ->post(self::API."/{$spreadsheetId}/values/{$range}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS", [
+            ->post(self::API."/{$spreadsheetId}/values/{$range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS", [
                 'majorDimension' => 'ROWS',
                 'values' => $rows,
             ])->throw();
