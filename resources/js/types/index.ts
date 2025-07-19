@@ -26,6 +26,7 @@ export interface Category {
     name_ru: string;
     color: string;
     account_code: string | null;
+    account_1c: string | null;
 }
 
 export interface DocumentRow {

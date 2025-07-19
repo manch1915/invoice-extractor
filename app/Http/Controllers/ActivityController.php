@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditEvent;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,7 +25,7 @@ class ActivityController extends Controller
             ->withQueryString();
 
         return Inertia::render('Activity/Index', [
-            'events' => $events->through(fn (AuditEvent $e) => [
+            'events' => JsonResource::collection($events->through(fn (AuditEvent $e) => [
                 'id' => $e->id,
                 'action' => $e->action,
                 'user' => $e->user?->name,
@@ -32,7 +33,7 @@ class ActivityController extends Controller
                 'subject_id' => $e->subject_id,
                 'changes' => $e->changes,
                 'created_at' => $e->created_at->toIso8601String(),
-            ]),
+            ])),
             'filter' => $action,
         ]);
     }

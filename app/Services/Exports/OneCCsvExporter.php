@@ -40,7 +40,7 @@ class OneCCsvExporter implements Exporter
                 $r->vendor(),
                 $r->taxId(),
                 $r->decimal($document->total, ','),
-                $this->rate($document->tax_rate),
+                $this->rate($document->tax_rate, $document->tax_amount),
                 $r->decimal($document->tax_amount, ','),
                 $document->currency === 'RUB' ? 'руб.' : (string) $document->currency,
                 $r->category('ru'),
@@ -57,10 +57,10 @@ class OneCCsvExporter implements Exporter
         return new ExportResult(filePath: $path);
     }
 
-    private function rate(?string $rate): string
+    private function rate(?string $rate, ?int $tax): string
     {
         if ($rate === null) {
-            return '';
+            return $tax === 0 ? 'Без НДС' : '';
         }
         $value = (float) $rate;
 

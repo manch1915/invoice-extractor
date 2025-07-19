@@ -10,6 +10,8 @@ export default defineConfigWithVueTs(
     {
         rules: {
             'vue/multi-word-component-names': 'off',
+            // page props arrive from Laravel in snake_case
+            'vue/prop-name-casing': 'off',
             'vue/max-attributes-per-line': 'off',
             'vue/singleline-html-element-content-newline': 'off',
             'vue/html-self-closing': 'off',

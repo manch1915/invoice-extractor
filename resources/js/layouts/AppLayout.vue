@@ -49,14 +49,24 @@ const nav = computed(() => {
             active: page.url.includes('status=needs_review') || route().current('documents.show'),
             count: page.props.queue_count,
         },
-        { label: t('nav.exports'), href: '/exports', icon: FileOutput, active: page.url.startsWith('/exports') },
-        { label: t('nav.rules'), href: '/categories', icon: Tags, active: page.url.startsWith('/categories') },
-        { label: t('nav.activity'), href: '/activity', icon: History, active: page.url.startsWith('/activity') },
+        {
+            label: t('nav.exports'),
+            href: route('exports.index'),
+            icon: FileOutput,
+            active: page.url.startsWith('/exports'),
+        },
+        {
+            label: t('nav.rules'),
+            href: route('categories.index'),
+            icon: Tags,
+            active: page.url.startsWith('/categories'),
+        },
+        { label: t('nav.activity'), href: route('activity'), icon: History, active: page.url.startsWith('/activity') },
     ];
     if (user.value?.can_manage) {
         items.push({
             label: t('nav.settings'),
-            href: '/settings',
+            href: route('settings'),
             icon: Settings2,
             active: page.url.startsWith('/settings'),
         });
