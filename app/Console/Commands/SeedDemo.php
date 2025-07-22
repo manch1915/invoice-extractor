@@ -6,12 +6,16 @@ namespace App\Console\Commands;
 
 use App\Enums\DocumentSource;
 use App\Enums\DocumentStatus;
+use App\Enums\ExportTarget;
 use App\Enums\IssueSeverity;
 use App\Enums\Role;
+use App\Models\AuditEvent;
 use App\Models\Document;
+use App\Models\Export;
 use App\Models\User;
 use App\Services\Documents\DocumentIngestor;
 use App\Services\Documents\ReviewService;
+use App\Services\Exports\ExportService;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 use Throwable;
@@ -26,7 +30,7 @@ class SeedDemo extends Command
 
     protected $signature = 'demo:seed {--path= : folder with manifest.json and documents/} {--keep-recent=14 : days of documents left for review}';
 
-    public function handle(DocumentIngestor $ingestor, ReviewService $review): int
+    public function handle(DocumentIngestor $ingestor, ReviewService $review, ExportService $exports): int
     {
         $option = $this->option('path');
         $path = is_string($option) && $option !== '' ? $option : database_path('demo');
@@ -58,6 +62,8 @@ class SeedDemo extends Command
         $this->newLine(2);
 
         $this->playBackReviews($review, $accountant, (int) $this->option('keep-recent'));
+        $this->playBackExports($exports, $accountant);
+        $this->backdateActivity();
 
         $counts = Document::query()->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status');
         $this->table(['status', 'documents'], $counts->map(fn ($n, $s) => [$s, $n])->values()->all());
@@ -77,6 +83,58 @@ class SeedDemo extends Command
             'updated_at' => $received,
             'processed_at' => $received->addSeconds(12),
         ]);
+    }
+
+    /** Summer documents already went to 1C at the start of September, then August's to Excel. */
+    private function playBackExports(ExportService $exports, User $accountant): void
+    {
+        $batches = [
+            [ExportTarget::OneC, '2026-07-01', '2026-08-01', '2026-08-03 10:12'],
+            [ExportTarget::Xlsx, '2026-08-01', '2026-09-01', '2026-09-02 16:40'],
+        ];
+        foreach ($batches as [$target, $from, $to, $when]) {
+            $ids = array_values(Document::query()
+                ->where('status', DocumentStatus::Ready)
+                ->where('issue_date', '>=', $from)
+                ->where('issue_date', '<', $to)
+                ->pluck('id')
+                ->map(fn ($id) => (string) $id)
+                ->all());
+            if ($ids === []) {
+                continue;
+            }
+            $export = $exports->start($target, $ids, $accountant);
+            Export::query()->whereKey($export->id)->update(['created_at' => $when, 'finished_at' => $when]);
+            Document::query()->whereKey($ids)->update(['exported_at' => $when]);
+        }
+    }
+
+    /**
+     * The activity log was written just now; move each entry to when it would have happened.
+     * Rule events are stamped with the approval recorded right after them in the same request.
+     */
+    private function backdateActivity(): void
+    {
+        $documents = Document::query()->get(['id', 'created_at', 'reviewed_at'])->keyBy('id');
+        $exports = Export::query()->get(['id', 'created_at'])->keyBy('id');
+        $next = null;
+
+        foreach (AuditEvent::query()->orderByDesc('id')->get() as $event) {
+            $document = $event->subject_type === 'Document' ? $documents->get($event->subject_id) : null;
+            $export = $event->subject_type === 'Export' ? $exports->get($event->subject_id) : null;
+
+            $when = match (true) {
+                $document !== null && $event->action === 'document.approved' => $document->reviewed_at,
+                $document !== null && $event->action === 'document.processed' => CarbonImmutable::parse($document->created_at)->addSeconds(12),
+                $document !== null => $document->created_at,
+                $export !== null => $export->created_at,
+                default => $next,
+            };
+            if ($when !== null) {
+                AuditEvent::query()->whereKey($event->id)->update(['created_at' => $when]);
+                $next = $when;
+            }
+        }
     }
 
     /** Older documents without real problems were already checked by the accountant. */
