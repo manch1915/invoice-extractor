@@ -66,6 +66,9 @@ watch(
     { immediate: true },
 );
 
+const vendorFallback = (doc: DocumentRow) =>
+    doc.status === 'queued' || doc.status === 'processing' ? t('documents.reading') : t('documents.no_vendor');
+
 const filtered = computed(() => props.filters.q !== '' || props.filters.category !== null);
 const showFullUpload = computed(
     () => props.documents.meta.total === 0 && !filtered.value && props.filters.status === 'all',
@@ -93,7 +96,7 @@ const showFullUpload = computed(
         </div>
 
         <div class="mt-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <nav class="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0" :aria-label="t('documents.title')">
+            <nav class="-mx-4 min-w-0 overflow-x-auto px-4 sm:mx-0 sm:px-0" :aria-label="t('documents.title')">
                 <ul class="flex min-w-max gap-1 border-b border-line">
                     <li v-for="tab in tabs" :key="tab.key">
                         <Link
@@ -247,7 +250,7 @@ const showFullUpload = computed(
             </div>
 
             <!-- phone list -->
-            <ul class="mt-4 grid gap-2 md:hidden">
+            <ul class="mt-4 grid grid-cols-1 gap-2 md:hidden">
                 <li v-for="doc in documents.data" :key="doc.id">
                     <Link
                         :href="route('documents.show', doc.id)"
@@ -266,7 +269,7 @@ const showFullUpload = computed(
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="flex items-start justify-between gap-2">
-                                <p class="truncate font-medium">{{ doc.vendor_name ?? t('documents.reading') }}</p>
+                                <p class="truncate font-medium">{{ doc.vendor_name ?? vendorFallback(doc) }}</p>
                                 <p class="figures font-medium whitespace-nowrap">
                                     {{ money(doc.total, doc.currency, locale) }}
                                 </p>

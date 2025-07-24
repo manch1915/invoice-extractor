@@ -63,7 +63,7 @@ const roles = [
                 >
                     {{ t('auth.lead') }}
                 </h1>
-                <ul class="mt-8 space-y-3 text-[15px] text-ink-2">
+                <ul class="mt-8 hidden space-y-3 text-[15px] text-ink-2 sm:block">
                     <li v-for="(point, i) in list('auth.points')" :key="i" class="flex gap-3">
                         <span class="mt-[9px] h-[3px] w-4 shrink-0 rounded-full bg-pen" aria-hidden="true" />
                         <span>{{ point }}</span>
