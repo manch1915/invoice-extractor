@@ -486,8 +486,10 @@ class RulesEngine:
             fields[FieldKey.TOTAL].confidence = max(fields[FieldKey.TOTAL].confidence, 0.95)
 
         # Prices include VAT and only "в т.ч. НДС" is printed: derive the net amount.
+        # It is exactly as reliable as the two numbers it comes from.
         if subtotal is None and total is not None and tax is not None:
-            fields[FieldKey.SUBTOTAL] = ExtractedField(value=format_decimal(total - tax), confidence=0.7)
+            confidence = min(fields[FieldKey.TOTAL].confidence, fields[FieldKey.TAX_AMOUNT].confidence)
+            fields[FieldKey.SUBTOTAL] = ExtractedField(value=format_decimal(total - tax), confidence=confidence)
 
 
 def _num(value: Decimal | None, places: int | None = None) -> str | None:
