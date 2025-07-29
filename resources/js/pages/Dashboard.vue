@@ -21,7 +21,13 @@ const props = defineProps<{
     metrics: {
         period: { from: string; to: string };
         base_currency: string;
-        totals: { documents: number; spend: number; vendors: number; hours_saved: number };
+        totals: {
+            documents: number;
+            spend: number;
+            vendors: number;
+            hours_saved: number;
+            review_seconds: number | null;
+        };
         by_category: Slice[];
         by_vendor: { id: number; name: string; amount: number; documents: number }[];
         by_month: { month: string; amount: number }[];
@@ -52,6 +58,16 @@ const maxVendor = computed(() => Math.max(1, ...props.metrics.by_vendor.map((v) 
 function categoryName(slice: Slice) {
     if (!slice.code) return t('dashboard.uncategorized');
     return (locale.value === 'ru' ? slice.name_ru : slice.name_en) ?? slice.code;
+}
+
+function waitingMeta(doc: DocumentRow) {
+    return [
+        doc.document_number,
+        doc.issue_date ? date(doc.issue_date, locale.value) : null,
+        doc.issues_count ? t('documents.issues_count', { count: doc.issues_count }) : null,
+    ]
+        .filter(Boolean)
+        .join(', ');
 }
 
 function setDays(days: number) {
@@ -114,13 +130,7 @@ function setDays(days: number) {
                         >
                             <div class="min-w-0 flex-1">
                                 <p class="truncate font-medium">{{ doc.vendor_name ?? doc.filename }}</p>
-                                <p class="truncate text-[12.5px] text-ink-3">
-                                    <span class="ident">{{ doc.document_number ?? '—' }}</span
-                                    >, {{ date(doc.issue_date, locale) }}
-                                    <template v-if="doc.issues_count"
-                                        >, {{ t('documents.issues_count', { count: doc.issues_count }) }}</template
-                                    >
-                                </p>
+                                <p class="truncate text-[12.5px] text-ink-3">{{ waitingMeta(doc) }}</p>
                             </div>
                             <span class="shrink-0 figures font-medium">{{
                                 money(doc.total, doc.currency, locale)
@@ -161,15 +171,25 @@ function setDays(days: number) {
                         {{ t(`dashboard.legend.${s.key}`) }} <span class="figures text-ink-3">{{ s.value }}</span>
                     </li>
                 </ul>
-                <div class="mt-auto border-t border-line pt-4">
-                    <p class="flex items-baseline gap-2">
-                        <span class="figures text-[28px] leading-none font-semibold condensed">{{
-                            metrics.totals.hours_saved.toLocaleString(locale === 'ru' ? 'ru-RU' : 'en-GB')
-                        }}</span>
-                        <span class="text-[13px] text-ink-2">{{ t('dashboard.hours_saved') }}</span>
-                    </p>
-                    <p class="mt-1 text-[12px] text-ink-3">{{ t('dashboard.hours_hint') }}</p>
-                </div>
+                <dl class="mt-auto grid grid-cols-2 gap-4 border-t border-line pt-4">
+                    <div>
+                        <dt class="text-[12.5px] text-ink-2">{{ t('dashboard.hours_saved') }}</dt>
+                        <dd class="mt-1 figures text-[28px] leading-none font-semibold condensed">
+                            {{ metrics.totals.hours_saved.toLocaleString(locale === 'ru' ? 'ru-RU' : 'en-GB') }}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-[12.5px] text-ink-2">{{ t('dashboard.review_time') }}</dt>
+                        <dd class="mt-1 figures text-[28px] leading-none font-semibold condensed">
+                            {{
+                                metrics.totals.review_seconds
+                                    ? t('dashboard.seconds', { value: metrics.totals.review_seconds })
+                                    : '—'
+                            }}
+                        </dd>
+                    </div>
+                    <p class="col-span-2 text-[12px] text-ink-3">{{ t('dashboard.hours_hint') }}</p>
+                </dl>
             </section>
         </div>
 

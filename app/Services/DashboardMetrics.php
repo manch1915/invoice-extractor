@@ -81,7 +81,20 @@ class DashboardMetrics
             'spend' => $spend,
             'vendors' => $documents->pluck('vendor_id')->filter()->unique()->count(),
             'hours_saved' => round($seconds / 3600, 1),
+            'review_seconds' => $this->medianReviewSeconds($documents),
         ];
+    }
+
+    /** @param  Collection<int, Document>  $documents */
+    private function medianReviewSeconds(Collection $documents): ?int
+    {
+        $times = $documents->filter(fn (Document $d) => $d->reviewed_at !== null && $d->review_seconds > 0)
+            ->pluck('review_seconds')->sort()->values();
+        if ($times->isEmpty()) {
+            return null;
+        }
+
+        return (int) $times->get(intdiv($times->count(), 2));
     }
 
     /**

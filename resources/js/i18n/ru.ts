@@ -222,6 +222,8 @@ const ru: typeof en = {
         legend: { automatic: 'Автоматически', reviewed: 'Проверено человеком', waiting: 'Ждут' },
         hours_saved: 'Часов ручного ввода сэкономлено',
         hours_hint: 'По сравнению с ручным вводом документа и его строк.',
+        review_time: 'Среднее время проверки',
+        seconds: '{value} с',
         spend: 'Расходы за период',
         documents: 'Документы',
         vendors: 'Поставщики',

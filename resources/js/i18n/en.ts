@@ -220,6 +220,8 @@ export default {
         legend: { automatic: 'Automatic', reviewed: 'Checked by a person', waiting: 'Waiting' },
         hours_saved: 'Hours of typing saved',
         hours_hint: 'Compared with entering each document and its lines by hand.',
+        review_time: 'Average check',
+        seconds: '{value} s',
         spend: 'Spent in the period',
         documents: 'Documents',
         vendors: 'Suppliers',
