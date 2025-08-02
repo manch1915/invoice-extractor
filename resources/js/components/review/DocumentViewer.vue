@@ -97,7 +97,8 @@ function onScroll() {
             <button
                 type="button"
                 class="h-8 min-w-14 rounded-md px-2 figures hover:bg-surface hover:text-ink"
-                :aria-label="t('review.fit')"
+                :aria-label="`${Math.round(zoom * 100)}%, ${t('review.fit')}`"
+                :title="t('review.fit')"
                 @click="setZoom(1)"
             >
                 {{ Math.round(zoom * 100) }}%
@@ -158,13 +159,14 @@ function onScroll() {
                         draggable="false"
                     />
 
-                    <!-- found values: grey outline, yellow marker when it needs a look, red pen when it blocks -->
-                    <button
+                    <!-- found values: grey outline, yellow marker when it needs a look, red pen when it blocks.
+                         A mouse shortcut only: the field list on the right is the keyboard path to the same fields. -->
+                    <div
                         v-for="box in visibleBoxes.filter((b) => b.page === page.number)"
                         :key="box.id"
-                        type="button"
+                        aria-hidden="true"
                         :data-box="box.id"
-                        class="absolute rounded-[3px] transition-[background-color,box-shadow] duration-150"
+                        class="absolute cursor-pointer rounded-[3px] transition-[background-color,box-shadow] duration-150"
                         :class="[
                             box.id === activeId
                                 ? 'z-10 bg-[#ffe066]/55 mix-blend-multiply shadow-[0_0_0_2px_#d9a400]'
@@ -177,7 +179,6 @@ function onScroll() {
                             picking ? 'pointer-events-none' : '',
                         ]"
                         :style="boxStyle(box.bbox)"
-                        :aria-label="box.label"
                         :title="box.label"
                         @click="emit('select', box.id)"
                     />

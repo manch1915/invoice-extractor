@@ -188,8 +188,8 @@ function setDays(days: number) {
                             }}
                         </dd>
                     </div>
-                    <p class="col-span-2 text-[12px] text-ink-3">{{ t('dashboard.hours_hint') }}</p>
                 </dl>
+                <p class="mt-3 text-[12px] text-ink-3">{{ t('dashboard.hours_hint') }}</p>
             </section>
         </div>
 

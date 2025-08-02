@@ -62,7 +62,7 @@ function message(issue: Issue): string {
                     <p class="text-[13.5px] leading-snug" :class="issue.resolved ? '' : 'text-ink'">
                         {{ message(issue) }}
                     </p>
-                    <p class="mt-0.5 text-[12px] text-ink-3">
+                    <p class="mt-0.5 text-[12px] text-ink-2">
                         {{
                             issue.resolved
                                 ? t('issues.resolved')

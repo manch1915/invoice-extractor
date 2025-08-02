@@ -270,7 +270,7 @@ const title = computed(
                 class="flex items-center gap-1.5 text-[13px] text-ink-3 hover:text-ink"
             >
                 <ArrowLeft class="size-4" />
-                <span class="hidden sm:inline">{{ t('review.back') }}</span>
+                <span class="sr-only sm:not-sr-only">{{ t('review.back') }}</span>
             </Link>
             <span class="hidden h-5 w-px bg-line sm:block" aria-hidden="true" />
             <div class="min-w-0 flex-1">
