@@ -50,7 +50,7 @@ return new class extends Migration
             $table->bigInteger('tax_amount')->nullable()->comment('minor units');
             $table->bigInteger('total')->nullable()->comment('minor units');
 
-            $table->foreignUlid('duplicate_of_id')->nullable()->constrained('documents')->nullOnDelete();
+            $table->ulid('duplicate_of_id')->nullable();
             $table->boolean('auto_approved')->default(false);
             $table->unsignedInteger('review_seconds')->default(0);
             $table->foreignId('uploaded_by')->nullable()->constrained('users')->nullOnDelete();
@@ -61,6 +61,11 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['vendor_id', 'document_number']);
+        });
+
+        // Postgres needs the primary key in place before a column can point back at it
+        Schema::table('documents', function (Blueprint $table) {
+            $table->foreign('duplicate_of_id')->references('id')->on('documents')->nullOnDelete();
         });
 
         Schema::create('document_pages', function (Blueprint $table) {
