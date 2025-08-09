@@ -199,34 +199,38 @@ return [
     */
 
     'defaults' => [
-        'supervisor-1' => [
+        // Reading a document waits on OCR for up to a few seconds, exports are quick.
+        'documents' => [
             'connection' => 'redis',
-            'queue' => ['default'],
-            'balance' => 'auto',
-            'autoScalingStrategy' => 'time',
+            'queue' => ['extraction'],
+            'balance' => 'simple',
+            'maxProcesses' => 2,
+            'memory' => 256,
+            'tries' => 3,
+            'timeout' => 240,
+            'nice' => 0,
+        ],
+        'background' => [
+            'connection' => 'redis',
+            'queue' => ['exports', 'default'],
+            'balance' => 'simple',
             'maxProcesses' => 1,
-            'maxTime' => 0,
-            'maxJobs' => 0,
-            'memory' => 128,
+            'memory' => 256,
             'tries' => 1,
-            'timeout' => 60,
+            'timeout' => 300,
             'nice' => 0,
         ],
     ],
 
     'environments' => [
         'production' => [
-            'supervisor-1' => [
-                'maxProcesses' => 10,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-            ],
+            'documents' => ['maxProcesses' => (int) env('HORIZON_DOCUMENT_PROCESSES', 2)],
+            'background' => ['maxProcesses' => 1],
         ],
 
         'local' => [
-            'supervisor-1' => [
-                'maxProcesses' => 3,
-            ],
+            'documents' => ['maxProcesses' => 1],
+            'background' => ['maxProcesses' => 1],
         ],
     ],
 

@@ -1,0 +1,36 @@
+# the image gets only what it runs; everything else stays out
+*
+!app
+!bootstrap
+!config
+!database
+!docker
+!lang
+!public
+!resources
+!routes
+!storage
+!artisan
+!composer.json
+!composer.lock
+!package.json
+!package-lock.json
+!.npmrc
+!tsconfig.json
+!vite.config.ts
+
+# hidden files and folders inside the allowed paths
+**/.*
+!.npmrc
+
+# rebuilt inside the image or created at runtime
+public/build
+public/hot
+storage/app/private/*
+storage/app/public/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*.php
+database/database.sqlite

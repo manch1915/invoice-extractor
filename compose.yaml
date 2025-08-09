@@ -1,0 +1,118 @@
+name: invoice-extractor
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: docker/app/Dockerfile
+  image: invoice-extractor-app
+  env_file: ${ENV_FILE:-.env}
+  environment:
+    DB_CONNECTION: pgsql
+    DB_HOST: postgres
+    DB_PORT: 5432
+    REDIS_HOST: redis
+    QUEUE_CONNECTION: redis
+    CACHE_STORE: redis
+    SESSION_DRIVER: redis
+    WORKER_URL: http://worker:8001
+  volumes:
+    - storage:/app/storage/app
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    worker:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  app:
+    <<: *app
+    ports:
+      - "${APP_PORT:-8080}:8080"
+
+  horizon:
+    <<: *app
+    environment:
+      CONTAINER_ROLE: horizon
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      WORKER_URL: http://worker:8001
+    command: ["php", "artisan", "horizon"]
+    healthcheck:
+      disable: true
+    depends_on:
+      app:
+        condition: service_healthy
+
+  scheduler:
+    <<: *app
+    environment:
+      CONTAINER_ROLE: scheduler
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      WORKER_URL: http://worker:8001
+    command: ["php", "artisan", "schedule:work"]
+    healthcheck:
+      disable: true
+    depends_on:
+      app:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: worker
+      target: base
+    image: invoice-extractor-worker
+    environment:
+      WORKER_TOKEN: ${WORKER_TOKEN:-}
+      WORKER_LLM_BASE_URL: ${LLM_BASE_URL:-}
+      WORKER_LLM_API_KEY: ${LLM_API_KEY:-}
+      WORKER_LLM_MODEL: ${LLM_MODEL:-}
+      WORKER_LLM_DAILY_TOKEN_LIMIT: ${LLM_DAILY_TOKEN_LIMIT:-300000}
+      WORKER_LLM_BUDGET_FILE: /var/lib/worker/llm-budget.json
+    volumes:
+      - worker-state:/var/lib/worker
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1536M
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-invoices}
+      POSTGRES_USER: ${DB_USERNAME:-invoices}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:8.6-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  storage:
+  worker-state:

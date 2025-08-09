@@ -19,12 +19,13 @@ RUN uv sync --frozen --no-dev --no-install-project
 COPY src ./src
 RUN uv sync --frozen --no-dev
 
-RUN useradd --create-home --uid 10001 worker
+RUN useradd --create-home --uid 10001 worker && mkdir -p /var/lib/worker && chown worker /var/lib/worker
 USER worker
 
 EXPOSE 8001
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health')"
-CMD ["/app/.venv/bin/uvicorn", "invoice_worker.main:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "2"]
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health')"
+# one process: OCR runs in Tesseract subprocesses from the thread pool, so requests still overlap
+CMD ["/app/.venv/bin/uvicorn", "invoice_worker.main:app", "--host", "0.0.0.0", "--port", "8001"]
 
 FROM base AS dev
 USER root
