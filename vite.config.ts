@@ -1,4 +1,3 @@
-/// <reference types="vitest/config" />
 import inertia from '@inertiajs/vite';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
@@ -29,9 +28,5 @@ export default defineConfig({
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
-    },
-    test: {
-        environment: 'jsdom',
-        include: ['resources/js/**/*.test.ts'],
     },
 });
