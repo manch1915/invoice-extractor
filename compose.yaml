@@ -30,7 +30,8 @@ services:
   app:
     <<: *app
     ports:
-      - "${APP_PORT:-8080}:8080"
+      # localhost only: put Caddy or another proxy in front for public traffic
+      - "127.0.0.1:${APP_PORT:-8080}:8080"
 
   horizon:
     <<: *app

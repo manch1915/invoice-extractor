@@ -13,6 +13,8 @@ use App\Models\User;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\Factory as Http;
+use Illuminate\Http\Middleware\TrustProxies;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
@@ -50,6 +52,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
         Model::preventAccessingMissingAttributes(! $this->app->isProduction());
+
+        // X-Forwarded-Host stays untrusted so a client cannot change the host in generated links
+        TrustProxies::at(config('invoices.trusted_proxies'));
+        TrustProxies::withHeaders(Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
 
         Gate::define('manage-settings', fn (User $user) => $user->hasRole(Role::Owner->value));
         Gate::define('delete-documents', fn (User $user) => $user->hasRole(Role::Owner->value));

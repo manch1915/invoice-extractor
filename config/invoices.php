@@ -61,6 +61,10 @@ return [
         'client_secret' => env('XERO_CLIENT_SECRET', ''),
     ],
 
+    // Reverse proxies allowed to set X-Forwarded-For/Proto, comma separated. The default covers
+    // the private ranges Docker networks use; set the exact address when the proxy is elsewhere.
+    'trusted_proxies' => array_filter(array_map(trim(...), explode(',', (string) (env('TRUSTED_PROXIES') ?: '127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16')))),
+
     'demo' => [
         'enabled' => (bool) env('DEMO_MODE', false),
         'owner_email' => 'owner@demo.test',

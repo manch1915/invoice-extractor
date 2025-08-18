@@ -23,6 +23,8 @@ DEMO_MODE=true                  # public demo: one-click sign-in, samples, night
 
 Optional: `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL` and `LLM_DAILY_TOKEN_LIMIT` for the language model engine; the OAuth credentials for Google and Xero.
 
+The app trusts `X-Forwarded-For` and `X-Forwarded-Proto` only from private Docker ranges by default. If the proxy reaches the app from somewhere else, list its address in `TRUSTED_PROXIES`. Horizon's dashboard stays closed while `DEMO_MODE` is on, because every visitor can sign in as the owner.
+
 ## 2. Join the proxy's network
 
 Create `compose.override.yaml` next to `compose.yaml` (it is picked up automatically and stays on the server):
