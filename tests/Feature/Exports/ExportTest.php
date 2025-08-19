@@ -22,7 +22,7 @@ beforeEach(fn () => seedBasics());
 function readyDocument(string $fixture = 'kanc-0929'): Document
 {
     fakeWorker(workerFixture($fixture));
-    $document = app(DocumentIngestor::class)->ingest(uniqid(), "{$fixture}.pdf", 'application/pdf', DocumentSource::Upload, accountant())->refresh();
+    $document = app(DocumentIngestor::class)->ingest(pdfBytes(uniqid()), "{$fixture}.pdf", DocumentSource::Upload, accountant())->refresh();
     expect($document->status)->toBe(DocumentStatus::Ready);
 
     return $document;
@@ -87,7 +87,7 @@ it('only exports approved documents', function () {
     $payload = workerFixture('kanc-0929');
     $payload['fields']['total']['confidence'] = 0.3;
     fakeWorker($payload);
-    $document = app(DocumentIngestor::class)->ingest('x', 'x.pdf', 'application/pdf', DocumentSource::Upload, accountant());
+    $document = app(DocumentIngestor::class)->ingest(pdfBytes(), 'x.pdf', DocumentSource::Upload, accountant());
 
     expect(fn () => app(ExportService::class)->start(ExportTarget::Xlsx, [$document->id], accountant()))
         ->toThrow(Illuminate\Validation\ValidationException::class);

@@ -45,10 +45,9 @@ class SeedDemo extends Command
         $bar = $this->output->createProgressBar(count($manifest));
         foreach ($manifest as $entry) {
             $file = "{$path}/documents/{$entry['file']}";
-            $mime = str_ends_with($file, '.pdf') ? 'application/pdf' : 'image/jpeg';
 
             try {
-                $ingestor->ingest((string) file_get_contents($file), $entry['file'], $mime, DocumentSource::Demo, $accountant);
+                $ingestor->ingest((string) file_get_contents($file), $entry['file'], DocumentSource::Demo, $accountant);
             } catch (Throwable $e) {
                 $this->newLine();
                 $this->warn("{$entry['file']}: {$e->getMessage()}");

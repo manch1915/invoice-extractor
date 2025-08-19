@@ -13,6 +13,7 @@ use App\Models\Category;
 use App\Models\CategoryRule;
 use App\Models\Document;
 use App\Services\Documents\DocumentIngestor;
+use App\Services\Documents\UnsupportedFileException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
@@ -22,7 +23,7 @@ beforeEach(fn () => seedBasics());
 
 function ingest(string $contents = 'pdf bytes', string $name = 'invoice.pdf'): Document
 {
-    return app(DocumentIngestor::class)->ingest($contents, $name, 'application/pdf', DocumentSource::Upload, owner());
+    return app(DocumentIngestor::class)->ingest(pdfBytes($contents), $name, DocumentSource::Upload, owner());
 }
 
 it('reads a clean invoice and approves it without a person', function () {
@@ -134,4 +135,18 @@ it('puts the document back in the queue when the worker is down', function () {
     expect(fn () => app()->call([new ProcessDocument($document->id), 'handle']))->toThrow(WorkerException::class)
         ->and($document->refresh()->status)->toBe(DocumentStatus::Queued)
         ->and($document->error)->toContain('Document reader failed');
+});
+
+it('refuses a file whose bytes are not a PDF or an image, whatever its name says', function () {
+    Queue::fake();
+
+    expect(fn () => app(DocumentIngestor::class)->ingest('<html><script>alert(1)</script></html>', 'invoice.pdf', DocumentSource::Email))
+        ->toThrow(UnsupportedFileException::class);
+    expect(Document::count())->toBe(0);
+});
+
+it('stores the type read from the bytes', function () {
+    Queue::fake();
+
+    expect(ingest()->mime_type)->toBe('application/pdf');
 });

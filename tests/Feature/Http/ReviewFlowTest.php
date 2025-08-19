@@ -21,7 +21,7 @@ function upaksnab(): Document
 {
     fakeWorker(workerFixture('upaksnab-0918'));
 
-    return app(DocumentIngestor::class)->ingest('pdf', 'upaksnab.pdf', 'application/pdf', DocumentSource::Upload, accountant())->refresh();
+    return app(DocumentIngestor::class)->ingest(pdfBytes('upaksnab'), 'upaksnab.pdf', DocumentSource::Upload, accountant())->refresh();
 }
 
 it('lets a visitor into the demo with one click', function () {
@@ -92,7 +92,7 @@ it('recomputes a net amount that was only derived when the tax is corrected', fu
     $payload['fields']['subtotal'] = ['value' => '4501.67', 'raw' => null, 'confidence' => 0.7, 'page' => null, 'bbox' => null];
     $payload['fields']['tax_amount']['value'] = '1500.33';
     fakeWorker($payload);
-    $document = app(DocumentIngestor::class)->ingest('pdf', 'kanc.pdf', 'application/pdf', DocumentSource::Upload, accountant())->refresh();
+    $document = app(DocumentIngestor::class)->ingest(pdfBytes('kanc'), 'kanc.pdf', DocumentSource::Upload, accountant())->refresh();
 
     $this->actingAs(accountant())->patch("/documents/{$document->id}/fields/tax_amount", ['value' => '1000,33']);
 
@@ -130,4 +130,21 @@ it('switches the interface language', function () {
     $this->actingAs(accountant())->post('/locale', ['locale' => 'en']);
 
     expect(accountant()->locale)->toBe('en');
+});
+
+it('serves an original only as the type it was checked to be', function () {
+    $document = upaksnab();
+
+    $this->actingAs(accountant())->get("/documents/{$document->id}/original")
+        ->assertOk()
+        ->assertHeader('Content-Type', 'application/pdf')
+        ->assertHeader('X-Content-Type-Options', 'nosniff');
+
+    // a row stored with a type the intake would refuse today is handed out as a download
+    $document->forceFill(['mime_type' => 'text/html'])->save();
+
+    $response = $this->actingAs(accountant())->get("/documents/{$document->id}/original")->assertOk();
+    expect($response->headers->get('Content-Type'))->toBe('application/octet-stream')
+        ->and($response->headers->get('Content-Disposition'))->toStartWith('attachment')
+        ->and($response->headers->get('Content-Security-Policy'))->toContain('sandbox');
 });

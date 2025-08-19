@@ -46,3 +46,9 @@ function accountant(): User
 {
     return User::role(Role::Accountant->value)->firstOrFail();
 }
+
+/** Bytes that pass the type check on intake; the tag keeps the checksum apart between files. */
+function pdfBytes(string $tag = ''): string
+{
+    return "%PDF-1.4\n%{$tag}\n";
+}

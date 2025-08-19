@@ -98,10 +98,19 @@ class DocumentController extends Controller
 
     public function original(Document $document, Filesystem $disk): StreamedResponse
     {
-        return $disk->response($document->storage_path, $document->original_filename, [
-            'Content-Type' => $document->mime_type,
+        // rows from before the type was sniffed on intake are downloaded rather than rendered
+        $inline = in_array($document->mime_type, DocumentIngestor::ACCEPTED_TYPES, true);
+        $headers = [
+            'Content-Type' => $inline ? $document->mime_type : 'application/octet-stream',
+            'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'private, max-age=86400',
-        ], 'inline');
+        ];
+        // Chrome will not open a PDF under a sandbox policy; images can take it
+        if ($document->mime_type !== 'application/pdf') {
+            $headers['Content-Security-Policy'] = "sandbox; default-src 'none'; img-src 'self'";
+        }
+
+        return $disk->response($document->storage_path, $document->original_filename, $headers, $inline ? 'inline' : 'attachment');
     }
 
     public function page(Document $document, int $number, Filesystem $disk): StreamedResponse

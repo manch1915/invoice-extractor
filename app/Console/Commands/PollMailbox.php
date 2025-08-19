@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use App\Enums\DocumentSource;
 use App\Services\Documents\DocumentIngestor;
+use App\Services\Documents\UnsupportedFileException;
 use Illuminate\Console\Command;
 use Throwable;
 use Webklex\PHPIMAP\ClientManager;
@@ -58,8 +59,10 @@ class PollMailbox extends Command
                     continue;
                 }
                 try {
-                    $ingestor->ingest($content, $name, (string) $attachment->getMimeType(), DocumentSource::Email, null, $meta);
+                    $ingestor->ingest($content, $name, DocumentSource::Email, null, $meta);
                     $imported++;
+                } catch (UnsupportedFileException $e) {
+                    $this->warn($e->getMessage());
                 } catch (Throwable $e) {
                     report($e);
                 }

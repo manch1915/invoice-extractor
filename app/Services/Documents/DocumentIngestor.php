@@ -10,6 +10,7 @@ use App\Jobs\ProcessDocument;
 use App\Models\Document;
 use App\Models\User;
 use App\Services\AuditLogger;
+use finfo;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
@@ -19,6 +20,9 @@ use Illuminate\Support\Str;
  */
 class DocumentIngestor
 {
+    /** Types that are stored and later served back inline; anything else is refused. */
+    public const ACCEPTED_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/tiff'];
+
     public function __construct(
         private readonly Filesystem $disk,
         private readonly AuditLogger $audit,
@@ -26,24 +30,29 @@ class DocumentIngestor
 
     public function fromUpload(UploadedFile $file, DocumentSource $source, ?User $user): Document
     {
-        return $this->ingest(
-            (string) $file->get(),
-            $file->getClientOriginalName(),
-            (string) ($file->getMimeType() ?? 'application/octet-stream'),
-            $source,
-            $user,
-        );
+        return $this->ingest((string) $file->get(), $file->getClientOriginalName(), $source, $user);
     }
 
-    /** @param  array<string, string>|null  $meta */
+    /**
+     * The type is read from the bytes, never taken from the browser or the mail headers:
+     * the original is served back inline later.
+     *
+     * @param  array<string, string>|null  $meta
+     *
+     * @throws UnsupportedFileException
+     */
     public function ingest(
         string $contents,
         string $filename,
-        string $mime,
         DocumentSource $source,
         ?User $user = null,
         ?array $meta = null,
     ): Document {
+        $mime = (string) (new finfo(FILEINFO_MIME_TYPE))->buffer($contents);
+        if (! in_array($mime, self::ACCEPTED_TYPES, true)) {
+            throw UnsupportedFileException::forType(basename($filename), $mime);
+        }
+
         $id = (string) Str::ulid();
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION)) ?: 'bin';
         $path = "originals/{$id}.{$extension}";

@@ -16,7 +16,7 @@ it('accepts documents over the API and returns where to poll', function () {
     Queue::fake();
     Sanctum::actingAs(owner(), ['documents:write', 'documents:read']);
 
-    $response = $this->postJson('/api/documents', ['files' => [UploadedFile::fake()->create('invoice.pdf', 120, 'application/pdf')]]);
+    $response = $this->postJson('/api/documents', ['files' => [UploadedFile::fake()->createWithContent('invoice.pdf', pdfBytes('api'))]]);
 
     $response->assertAccepted()->assertJsonPath('data.0.status', 'queued');
     $this->getJson($response->json('data.0.url'))->assertOk()->assertJsonPath('data.status', 'queued');
