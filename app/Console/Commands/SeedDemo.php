@@ -38,6 +38,9 @@ class SeedDemo extends Command
         $accountant = User::role(Role::Accountant->value)->firstOrFail();
         // read each document right away instead of handing it to the queue workers
         config(['queue.default' => 'sync']);
+        // the sample set goes through the free rules engine, so the nightly reset never eats
+        // the day's LLM allowance; visitors' own uploads still use the configured engine
+        config(['invoices.worker.engine' => 'rules']);
 
         // oldest first, so duplicates and "unusual amount" compare against what came before
         usort($manifest, fn (array $a, array $b) => strcmp($a['expected']['issue_date'], $b['expected']['issue_date']));
