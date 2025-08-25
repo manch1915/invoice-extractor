@@ -42,6 +42,17 @@ networks:
     name: proxy_network_name   # the network your Caddy container is attached to
 ```
 
+Compose registers every service under its plain name too, so on a crowded proxy network `app` or `postgres` may already belong to someone else, and the app could resolve `postgres` to a stranger's database. In that case keep the app off the proxy network and publish it on that network's gateway address instead, where only containers on the host can reach it:
+
+```yaml
+services:
+  app:
+    ports: !override
+      - "172.18.0.1:8097:8080"   # docker network inspect <proxy network> for the gateway
+```
+
+and point the proxy at `172.18.0.1:8097`.
+
 ## 3. Start
 
 ```bash

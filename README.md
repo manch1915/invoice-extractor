@@ -4,6 +4,8 @@ Reads invoices, receipts, waybills and acts (PDFs, scans, phone photos), checks 
 
 It is built for small-business bookkeeping: a bakery, a studio, an agency that gets a few hundred supplier documents a month in Russian and English and still types them in by hand.
 
+**Live demo: https://invoices.narcisbin.com** (one-click sign-in as the owner or the accountant, 41 sample documents loaded, the data resets every night). Files you upload there are read by a language model with a daily token cap; the samples are read by the layout rules.
+
 ![Review screen: a scanned Russian invoice with a VAT mistake marked in red on the page and explained in the side panel](docs/screenshots/review-vat-en.png)
 
 ## What it does
@@ -141,6 +143,8 @@ cd worker && uv run pytest && uv run mypy && uv run python demo/evaluate.py ../d
 ## По-русски
 
 Сервис для бухгалтерии малого бизнеса. Загружаете пачку счетов, накладных, актов и чеков (PDF, сканы, фото с телефона, письма с вложениями), он достаёт поставщика, ИНН или VAT, номер, даты, позиции, суммы и НДС, сверяет итоги, ставку налога, контрольную сумму ИНН и дубликаты, раскладывает по категориям и выгружает в Excel, CSV для 1С, Google Таблицы или Xero. Всё сомнительное попадает в очередь проверки: документ слева, поля справа, нужное место подсвечено на скане, исправление в один клик. Интерфейс на русском и английском.
+
+Демо: https://invoices.narcisbin.com (вход в один клик, 41 документ уже загружен, данные сбрасываются каждую ночь).
 
 Запуск: `cp .env.example .env`, заполнить `APP_KEY`, `DB_PASSWORD`, `WORKER_TOKEN`, при желании `DEMO_MODE=true`, затем `docker compose up -d --build`.
 
